@@ -10,7 +10,7 @@ add_library(Gui
 	MainWindow.cpp
 	${GUI_HEADERS}
 	${UIS_HDRS})
-
+	
 include_directories(include/Gui)
-
+target_link_libraries(Gui PluginsInspector)
 qt5_use_modules(Gui Widgets)

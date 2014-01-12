@@ -8,9 +8,11 @@
 
 #include "Gui/MainWindow.h"
 #include <QApplication>
+#include <gstreamermm.h>
 
 int main(int argc, char** argv)
 {
+	Gst::init(argc, argv);
 	QApplication a(argc, argv);
 	MainWindow w;
 
