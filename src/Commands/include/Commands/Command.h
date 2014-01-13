@@ -14,6 +14,7 @@
 enum class CommandType
 {
 	ADD,
+	STATE
 };
 
 class Command
