@@ -9,6 +9,7 @@
 #ifndef MAINWINDOW_H_
 #define MAINWINDOW_H_
 
+#include "PluginsInspector.h"
 #include <QMainWindow>
 
 namespace Ui{class MainWindow;}
@@ -22,7 +23,9 @@ public:
 
 private:
 	Ui::MainWindow *ui;
+	PluginsInspectorTreeView plugins_tree_view;
 
+	void reload_plugin_inspector();
 };
 
 #endif /* MAINWINDOW_H_ */
