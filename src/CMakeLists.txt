@@ -1,5 +1,6 @@
 add_subdirectory(Gui)
 add_subdirectory(PluginsInspector)
+add_subdirectory(Utils)
 
 add_executable(gstcreator main.cpp)
 

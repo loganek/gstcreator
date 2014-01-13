@@ -21,6 +21,7 @@ INCLUDE(FindPkgConfig)
 
 include_directories(
 	${PROJECT_SOURCE_DIR}/Gui/include
-	${PROJECT_SOURCE_DIR}/PluginsInspector/include)
+	${PROJECT_SOURCE_DIR}/PluginsInspector/include
+	${PROJECT_SOURCE_DIR}/Utils/include)
 
 add_subdirectory(src)
