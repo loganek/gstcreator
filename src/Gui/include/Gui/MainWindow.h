@@ -24,7 +24,7 @@ public:
 private:
 	Ui::MainWindow *ui;
 	PluginsInspectorTreeView plugins_tree_view;
-
+	PluginsInspectorFilter filter;
 	void reload_plugin_inspector();
 };
 

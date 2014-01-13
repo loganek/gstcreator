@@ -16,8 +16,13 @@ MainWindow::MainWindow(QWidget *parent)
   ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-
+	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
+
+	connect(ui->pluginInspectorFilterLineEdit, SIGNAL(textChanged(QString)),
+				&filter, SLOT(setFilterFixedString(QString)));
+
+
 	connect(ui->inspectorByKlassRadioButton, &QRadioButton::toggled, [this](bool) {
 		reload_plugin_inspector();
 	});
@@ -30,10 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::reload_plugin_inspector()
 {
-	PluginsInspectorFilter* filter = new PluginsInspectorFilter();
-	filter->setSourceModel(new PluginsInspectorModel(ui->inspectorByKlassRadioButton->isChecked() ?
+	filter.setSourceModel(new PluginsInspectorModel(ui->inspectorByKlassRadioButton->isChecked() ?
 			FillInspectorMethod::BY_KLASS : FillInspectorMethod::BY_PLUGIN));
-	plugins_tree_view.setModel(filter);
 }
 
 MainWindow::~MainWindow()

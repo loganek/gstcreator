@@ -65,7 +65,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="QLineEdit" name="pluginInspectorFilterLineEdit"/>
         </item>
         <item>
          <widget class="QFrame" name="pluginsInspectorFrame">
