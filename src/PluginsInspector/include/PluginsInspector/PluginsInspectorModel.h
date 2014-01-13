@@ -13,6 +13,13 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <gstreamermm.h>
+
+enum class FillInspectorMethod
+{
+	BY_KLASS,
+	BY_PLUGIN
+};
 
 class PluginsInspectorModel : public QAbstractItemModel
 {
@@ -22,8 +29,14 @@ private:
 	std::vector<PluginsInspectorItem*> items;
 	PluginsInspectorItem* root_item;
 
+	PluginsInspectorItem* find_parent(PluginsInspectorItem* current_item,
+			const std::vector<std::string>& klasses, size_t klass_it);
+
+	void fill_inspector_by_plugin(const Glib::RefPtr<Gst::Plugin>& plugin);
+	void fill_inspector_by_klass(const Glib::RefPtr<Gst::Plugin>& plugin);
+
 public:
-	explicit PluginsInspectorModel(QObject* parent = nullptr);
+	explicit PluginsInspectorModel(FillInspectorMethod method, QObject* parent = nullptr);
 	virtual ~PluginsInspectorModel();
 
 	QVariant data(const QModelIndex& index, int role) const;

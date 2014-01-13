@@ -13,6 +13,6 @@ add_library(PluginsInspector
 	${FACTORY_INSPECTOR_HEADERS}
 )
 
-target_link_libraries(PluginsInspector ${GSTMM_LIBRARIES})
+target_link_libraries(PluginsInspector Utils ${GSTMM_LIBRARIES})
 include_directories(include/PluginsInspector)
 qt5_use_modules(PluginsInspector Widgets)

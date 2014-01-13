@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 	layout()->addWidget(tree);
 
 	PluginsInspectorFilter* filter = new PluginsInspectorFilter();
-	filter->setSourceModel(new PluginsInspectorModel());
+	filter->setSourceModel(new PluginsInspectorModel(FillInspectorMethod::BY_KLASS));
 
 	tree->setModel(filter);
 }
