@@ -9,5 +9,5 @@ set(SOURCE main.cpp)
 add_subdirectory(Commands)
 
 add_executable(Test ${SOURCE})
-target_link_libraries(Test Commands ${GSTMM_LIBRARIES} ${GTEST_BOTH_LIBRARIES})
+target_link_libraries(Test Commands ${GSTMM_LIBRARIES} ${GTEST_BOTH_LIBRARIES} pthread)
 
