@@ -8,4 +8,6 @@ add_library(Commands
 	AddCommand.cpp
 	${COMMANDS_HEADERS})
 	
+target_link_libraries(Commands ${GSTMM_LIBRARIES})
+	
 include_directories(include/Commands)

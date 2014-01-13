@@ -21,7 +21,7 @@ void AddCommand::run_command()
 {
 	if (item->is_element())
 	{
-		if (!item->is_bin())
+		if (!model->is_bin())
 			throw std::runtime_error("parent object must be a BIN object!");
 
 		RefPtr<Bin>::cast_static(model)->add(RefPtr<Element>::cast_static(item));
@@ -29,9 +29,11 @@ void AddCommand::run_command()
 
 	else if (item->is_pad())
 	{
-		if (model->add_pad(RefPtr<Pad>::cast_static(item)))
+		if (!model->add_pad(RefPtr<Pad>::cast_static(item)))
 			throw std::runtime_error("cannot add pad");
 	}
+	else
+		throw std::runtime_error("unknow item type");
 }
 
 CommandType AddCommand::get_type()

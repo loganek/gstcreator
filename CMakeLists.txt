@@ -26,3 +26,4 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/Utils/include)
 
 add_subdirectory(src)
+add_subdirectory(test)

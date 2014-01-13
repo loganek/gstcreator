@@ -15,6 +15,7 @@ class AddCommand : public Command
 {
 private:
 	Glib::RefPtr<Gst::Object> item;
+
 public:
 	AddCommand(const Glib::RefPtr<Gst::Object>& item,
 			const Glib::RefPtr<Gst::Element>& model);
