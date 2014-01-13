@@ -1,4 +1,4 @@
-set(FACTORY_INSPECTOR_HEADERS
+set(PLUGINS_INSPECTOR_HEADERS
 	include/PluginsInspector/PluginsInspectorFilter.h
 	include/PluginsInspector/PluginsInspectorItem.h
 	include/PluginsInspector/PluginsInspectorModel.h
@@ -10,7 +10,7 @@ add_library(PluginsInspector
 	PluginsInspectorItem.cpp
 	PluginsInspectorModel.cpp
 	PluginsInspectorTreeView.cpp
-	${FACTORY_INSPECTOR_HEADERS}
+	${PLUGINS_INSPECTOR_HEADERS}
 )
 
 target_link_libraries(PluginsInspector Utils ${GSTMM_LIBRARIES})

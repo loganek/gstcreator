@@ -1,3 +1,4 @@
+add_subdirectory(Commands)
 add_subdirectory(Gui)
 add_subdirectory(PluginsInspector)
 add_subdirectory(Utils)
