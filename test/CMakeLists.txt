@@ -11,5 +11,5 @@ add_subdirectory(LexPars)
 add_subdirectory(Utils)
 
 add_executable(Test ${SOURCE})
-target_link_libraries(Test Commands Utils ${GSTMM_LIBRARIES} ${GTEST_BOTH_LIBRARIES} pthread)
+target_link_libraries(Test Commands Utils LexPars ${GSTMM_LIBRARIES} ${GTEST_BOTH_LIBRARIES} pthread)
 
