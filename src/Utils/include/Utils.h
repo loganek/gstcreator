@@ -9,6 +9,7 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#include "Utils/GstUtils.h"
 #include "Utils/StringUtils.h"
 
 #endif /* UTILS_H_ */
