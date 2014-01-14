@@ -7,7 +7,8 @@ include_directories(${GTEST_INCLUDE_DIRS}
 set(SOURCE main.cpp)
 	
 add_subdirectory(Commands)
+add_subdirectory(Utils)
 
 add_executable(Test ${SOURCE})
-target_link_libraries(Test Commands ${GSTMM_LIBRARIES} ${GTEST_BOTH_LIBRARIES} pthread)
+target_link_libraries(Test Commands Utils ${GSTMM_LIBRARIES} ${GTEST_BOTH_LIBRARIES} pthread)
 

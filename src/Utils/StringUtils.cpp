@@ -7,24 +7,23 @@
  */
 
 #include "StringUtils.h"
-#include <algorithm>
+#include <cstring>
 
-std::vector<std::string> StringUtils::split(std::string text,
-		const std::string& delim)
+using namespace std;
+
+vector<string> StringUtils::split(const string& text, const string& delim)
 {
-	size_t pos;
-	std::vector<std::string> values;
+	// TODO support arguments with " "
 
-	while ((pos = text.find(delim)) != std::string::npos)
+	char* cstr = const_cast<char*>(text.c_str()),
+			*current;
+	vector<string> values;
+
+	current = strtok(cstr, delim.c_str());
+	while (current)
 	{
-		// TODO support arguments with " "
-		std::string v = text.substr(0, pos);
-		if (!v.empty())
-			values.push_back(v);
-		text.erase(0, pos + 1);
+		values.push_back(current);
+		current = strtok(nullptr, delim.c_str());
 	}
-
-	values.push_back(text);
-
 	return values;
 }
