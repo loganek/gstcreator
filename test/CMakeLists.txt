@@ -7,6 +7,7 @@ include_directories(${GTEST_INCLUDE_DIRS}
 set(SOURCE main.cpp)
 	
 add_subdirectory(Commands)
+add_subdirectory(LexPars)
 add_subdirectory(Utils)
 
 add_executable(Test ${SOURCE})
