@@ -14,11 +14,15 @@
 
 enum class Token
 {
-	INVALID,
-	IDENTIFIER,
-	OPERATOR,
-	VAR_DEF,
+	INVALID = 0,
+	IDENTIFIER = 1,
+	OPERATOR = 2,
+	VAR_DEF = 4,
+	EOL = 8,
 };
+
+Token operator|(Token l, Token r);
+Token operator&(Token l, Token r);
 
 class Lexer
 {
@@ -38,9 +42,11 @@ private:
 public:
 	Lexer();
 	Token get_next_token();
+	Token get_next_token(Token expected);
 	std::string get_identifier();
 	char get_operator();
 	void set_buffer(const std::string& buffer);
+	std::string read_until(int sign);
 };
 
 
