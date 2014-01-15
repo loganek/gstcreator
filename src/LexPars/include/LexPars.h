@@ -11,5 +11,6 @@
 
 #include "LexPars/Lexer.h"
 #include "LexPars/Parser.h"
+#include "LexPars/Expression.h"
 
 #endif /* LEXPARS_H_ */
