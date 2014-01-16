@@ -13,6 +13,13 @@
 #include <string>
 #include <vector>
 
+enum class ExpressionType
+{
+	OBJECT = 0,
+	METHOD = 1,
+	STRING = 2
+};
+
 class MethodExpression;
 
 class ObjectExpression
@@ -32,7 +39,8 @@ public:
 	ObjectExpression* get_child() const;
 	MethodExpression* get_method() const;
 	void set_child(ObjectExpression* child);
-	void set_method(MethodExpression* method);
+	virtual ExpressionType get_type() const
+	{ return ExpressionType::OBJECT; }
 };
 
 class MethodExpression : public ObjectExpression
@@ -44,12 +52,16 @@ public:
 	MethodExpression(const std::string& name, std::vector<ObjectExpression*>& args);
 	virtual ~MethodExpression();
 	std::vector<ObjectExpression*> get_args() const;
+	ExpressionType get_type() const
+	{ return ExpressionType::METHOD; }
 };
 
 class StringExpression : public ObjectExpression
 {
 public:
 	StringExpression(const std::string& name);
+	ExpressionType get_type() const
+	{ return ExpressionType::STRING; }
 };
 
 #endif /* EXPRESSION_H_ */

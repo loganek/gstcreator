@@ -7,6 +7,7 @@
  */
 
 #include "Expression.h"
+#include <stdexcept>
 
 ObjectExpression::ObjectExpression(const std::string& name)
 : child(nullptr),
@@ -23,11 +24,6 @@ ObjectExpression::~ObjectExpression()
 
 void ObjectExpression::set_child(ObjectExpression* child)
 {
-	MethodExpression* m = dynamic_cast<MethodExpression*>(child);
-
-	if (m != nullptr)
-		set_method(m);
-
 	this->child = child;
 }
 
@@ -43,12 +39,10 @@ ObjectExpression*  ObjectExpression::get_child() const
 
 MethodExpression*  ObjectExpression::get_method() const
 {
-	return method;
-}
+	if (child == nullptr || child->get_type() != ExpressionType::METHOD)
+		throw std::runtime_error("object has no method");
 
-void  ObjectExpression::set_method(MethodExpression* method)
-{
-	this->method = method;
+	return static_cast<MethodExpression*>(child);
 }
 
 MethodExpression::MethodExpression(const std::string& name, std::vector<ObjectExpression*>& args)

@@ -8,19 +8,19 @@
 
 #include "LexPars/Parser.h"
 #include <gtest/gtest.h>
-#include <iostream>
+#include <memory>
 
 TEST(Parser, SimpleIdentifierParse)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("marcin");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("marcin"));
 	ASSERT_EQ("marcin", exp->get_name());
 }
 
 TEST(Parser, AccessToChildObject)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.test");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.test"));
 	ASSERT_EQ("this", exp->get_name());
 	ASSERT_EQ("is", exp->get_child()->get_name());
 	ASSERT_EQ("test", exp->get_child()->get_child()->get_name());
@@ -29,7 +29,7 @@ TEST(Parser, AccessToChildObject)
 TEST(Parser, NoArgNoReturnMethod)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method()");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method()"));
 	ASSERT_EQ("this", exp->get_name());
 	ASSERT_EQ("is", exp->get_child()->get_name());
 	MethodExpression* method = exp->get_child()->get_method();
@@ -40,7 +40,7 @@ TEST(Parser, NoArgNoReturnMethod)
 TEST(Parser, SimpleArgNoReturnMethod)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method(arg)");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method(arg)"));
 	MethodExpression* method = exp->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
 	ASSERT_EQ(1, method->get_args().size());
@@ -50,7 +50,7 @@ TEST(Parser, SimpleArgNoReturnMethod)
 TEST(Parser, ThreeSimpleArgsNoReturnMethod)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method(arg1, arg2, arg3)");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method(arg1, arg2, arg3)"));
 	MethodExpression* method = exp->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
 	ASSERT_EQ(3, method->get_args().size());
@@ -62,7 +62,7 @@ TEST(Parser, ThreeSimpleArgsNoReturnMethod)
 TEST(Parser, FunctionArgNoReturnMethod)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method(obj.fun())");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method(obj.fun())"));
 	MethodExpression* method = exp->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
 	ASSERT_EQ(1, method->get_args().size());
@@ -74,7 +74,7 @@ TEST(Parser, FunctionArgNoReturnMethod)
 TEST(Parser, FunctionArgWithTwoArgsNoReturnMethod)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method(obj.fun(test1, test2))");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method(obj.fun(test1, test2))"));
 	MethodExpression* method = exp->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
 	ASSERT_EQ(1, method->get_args().size());
@@ -87,7 +87,7 @@ TEST(Parser, FunctionArgWithTwoArgsNoReturnMethod)
 TEST(Parser, ParseStringArguments)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method(\"str\", ing, \"arg\")");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method(\"str\", ing, \"arg\")"));
 
 	MethodExpression* method = exp->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
@@ -101,7 +101,7 @@ TEST(Parser, ParseStringArguments)
 TEST(Parser, FunctionArgWithTwoFunctionArgsWithArgNoReturnMethod)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.is.method(obj.fun(myobj.fun2(), myobj.fun3(test1, test2), test3), \"test4\")");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.is.method(obj.fun(myobj.fun2(), myobj.fun3(test1, test2), test3), \"test4\")"));
 
 	MethodExpression* method = exp->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
@@ -114,7 +114,7 @@ TEST(Parser, FunctionArgWithTwoFunctionArgsWithArgNoReturnMethod)
 TEST(Parser, FunctionWithReturnedValue)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.method().fun()");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.method().fun()"));
 	MethodExpression* method = exp->get_method();
 	ASSERT_EQ("fun", method->get_method()->get_name());
 }
@@ -122,7 +122,25 @@ TEST(Parser, FunctionWithReturnedValue)
 TEST(Parser, AdvancedFunctionWithReturnedValue)
 {
 	Parser parser;
-	ObjectExpression* exp = parser.parse("this.method(and, \"some\", args, and.function(\"with\", \"args\").with.method(), cool).fun()");
+	std::shared_ptr<ObjectExpression> exp(parser.parse("this.method(and, \"some\", args, and.function(\"with\", \"args\").with.method(), cool).fun()"));
 	MethodExpression* method = exp->get_method()->get_args()[3]->get_method()->get_child()->get_method();
 	ASSERT_EQ("method", method->get_name());
+}
+
+TEST(Parser, FunctionWithoutObject)
+{
+	Parser parser;
+	std::shared_ptr<ObjectExpression> exp(parser.parse("method()"));
+	ASSERT_EQ(ExpressionType::METHOD, exp->get_type());
+}
+
+TEST(Parser, AdvancedFunctionWithoutObject)
+{
+	Parser parser;
+	std::shared_ptr<ObjectExpression> exp(parser.parse("method(first, \"arg\", function(\"arg1\", arg2).with.method(), arg).fun()"));
+	std::shared_ptr<MethodExpression> method = std::static_pointer_cast<MethodExpression>(exp);
+	ASSERT_EQ(method->get_method()->get_name(), "fun");
+	ASSERT_EQ(ExpressionType::METHOD, method->get_args()[2]->get_type());
+	MethodExpression* method2 = static_cast<MethodExpression*>(method->get_args()[2]);
+	ASSERT_EQ(ExpressionType::STRING, method2->get_args()[0]->get_type());
 }
