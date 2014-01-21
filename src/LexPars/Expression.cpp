@@ -11,8 +11,7 @@
 
 ObjectExpression::ObjectExpression(const std::string& name)
 : child(nullptr),
-  name(name),
-  method(nullptr)
+  name(name)
 {
 }
 
@@ -37,12 +36,17 @@ ObjectExpression*  ObjectExpression::get_child() const
 	return child;
 }
 
-MethodExpression*  ObjectExpression::get_method() const
+MethodExpression*  ObjectExpression::as_method()
 {
-	if (child == nullptr || child->get_type() != ExpressionType::METHOD)
-		throw std::runtime_error("object has no method");
+	if (!is_method())
+		throw std::runtime_error("object is not a method");
 
-	return static_cast<MethodExpression*>(child);
+	return static_cast<MethodExpression*>(this);
+}
+
+bool ObjectExpression::is_method() const
+{
+	return get_type() == ExpressionType::METHOD;
 }
 
 MethodExpression::MethodExpression(const std::string& name, std::vector<ObjectExpression*>& args)

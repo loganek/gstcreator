@@ -1,4 +1,5 @@
 set (SOURCE ${SOURCE} 
-	${CMAKE_CURRENT_SOURCE_DIR}/AddCommand.cpp 
-	${CMAKE_CURRENT_SOURCE_DIR}/StateCommand.cpp 
+	${CMAKE_CURRENT_SOURCE_DIR}/AddCommand.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/StateCommand.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/CommandFactory.cpp
 	PARENT_SCOPE)

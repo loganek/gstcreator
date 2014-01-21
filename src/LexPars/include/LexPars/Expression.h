@@ -29,7 +29,6 @@ private:
 
 protected:
 	std::string name;
-	MethodExpression* method;
 
 public:
 	virtual ~ObjectExpression();
@@ -37,10 +36,11 @@ public:
 
 	std::string get_name() const;
 	ObjectExpression* get_child() const;
-	MethodExpression* get_method() const;
+	MethodExpression* as_method();
 	void set_child(ObjectExpression* child);
 	virtual ExpressionType get_type() const
 	{ return ExpressionType::OBJECT; }
+	bool is_method() const;
 };
 
 class MethodExpression : public ObjectExpression

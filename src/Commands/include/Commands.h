@@ -12,5 +12,6 @@
 #include "Commands/Command.h"
 #include "Commands/AddCommand.h"
 #include "Commands/StateCommand.h"
+#include "Commands/CommandFactory.h"
 
 #endif /* COMMANDS_H_ */
