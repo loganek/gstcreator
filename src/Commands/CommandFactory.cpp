@@ -49,7 +49,7 @@ shared_ptr<Command> CommandFactory::process()
 
 shared_ptr<Command> CommandFactory::process_method()
 {
-	if (method->get_name() == "addelement")
+	if (method->get_name() == "add_element")
 	{
 		if (method->get_args().size() != 2)
 			throw runtime_error("invalid number of arguments");
@@ -57,8 +57,25 @@ shared_ptr<Command> CommandFactory::process_method()
 		if (!gst_object->is_bin())
 			throw runtime_error("invalid object type");
 
-		return shared_ptr<Command>(new AddCommand(ElementFactory::create_element(method->get_args()[0]->get_name(),
+		return shared_ptr<Command>(new AddCommand(
+				ElementFactory::create_element(method->get_args()[0]->get_name(),
 				method->get_args()[1]->get_name()), RefPtr<Bin>::cast_static(gst_object)));
+	}
+	else if (method->get_name() == "add_pad")
+	{
+		int args_cnt = method->get_args().size();
+
+		if (args_cnt != 1 && args_cnt != 2)
+			throw runtime_error("invalid number of arguments");
+
+		if (!gst_object->is_element())
+			throw runtime_error("invalid object type");
+
+		RefPtr<Element> el = el.cast_static(gst_object);
+		RefPtr<PadTemplate> tpl = el->get_pad_template(method->get_args()[0]->get_name().c_str());
+		RefPtr<Pad> pad = (args_cnt == 1) ? Pad::create(tpl) : Pad::create(tpl, method->get_args()[1]->get_name().c_str());
+
+		return shared_ptr<Command>(new AddCommand(pad, el));
 	}
 
 	throw runtime_error("invalid method");

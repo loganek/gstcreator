@@ -16,7 +16,7 @@ using Glib::RefPtr;
 TEST(CommandFactory, ShouldCorrectAddElement)
 {
 	auto bin = Bin::create("empty");
-	auto parsed = Parser().parse("addelement(\"xvimagesink\", \"mojsink\")");
+	auto parsed = Parser().parse("add_element(\"xvimagesink\", \"mojsink\")");
 
 
 	CommandFactory factory(parsed, bin);
@@ -27,4 +27,20 @@ TEST(CommandFactory, ShouldCorrectAddElement)
 
 	ASSERT_TRUE(element);
 	ASSERT_EQ("mojsink", element->get_name());
+}
+
+TEST(CommandFactory, ShouldCorrectAddPad)
+{
+	auto tee = ElementFactory::create_element("tee", "test_tee");
+	auto parsed = Parser().parse("add_pad(\"src_%u\", \"moj_pad\")");
+
+
+	CommandFactory factory(parsed, tee);
+	std::shared_ptr<Command> cmd = factory.process();
+	cmd->run_command();
+
+	auto pad = tee->get_static_pad("moj_pad");
+
+	ASSERT_TRUE(pad);
+	ASSERT_EQ("moj_pad", pad->get_name());
 }

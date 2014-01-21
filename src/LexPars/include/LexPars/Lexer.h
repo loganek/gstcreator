@@ -39,6 +39,8 @@ private:
 	int read_char();
 	void reset();
 
+	static bool is_correct_sign_name(char c);
+
 public:
 	Lexer();
 	Token get_next_token();

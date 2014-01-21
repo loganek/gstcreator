@@ -28,6 +28,11 @@ Lexer::Lexer()
 	reset();
 }
 
+bool Lexer::is_correct_sign_name(char c)
+{
+	return isalnum(c) || c == '_' || c == '-';
+}
+
 Token Lexer::get_token()
 {
 	while (isspace(last_char))
@@ -39,7 +44,7 @@ Token Lexer::get_token()
 	if (isalpha(last_char))
 	{
 		current_identifier = last_char;
-		while (isalnum((last_char = read_char())))
+		while (is_correct_sign_name((last_char = read_char())))
 			current_identifier += last_char;
 
 		if (current_identifier == "var")
