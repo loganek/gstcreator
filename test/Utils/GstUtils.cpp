@@ -20,9 +20,9 @@ TEST(GstUtils, ShouldCorrectFindElementInBin)
 	first->add(ElementFactory::create_element("queue", path[1]));
 	model->add(first);
 
-	RefPtr<Element> e = GstUtils::find_element(path, model);
+	RefPtr<Object> o = GstUtils::find_element(path, model);
 
-	ASSERT_EQ(path[1], e->get_name());
+	ASSERT_EQ(path[1], o->get_name());
 }
 
 TEST(GstUtils, ShouldNotFindElementInBin)
@@ -32,7 +32,17 @@ TEST(GstUtils, ShouldNotFindElementInBin)
 	auto model = Bin::create("main");
 	model->add(ElementFactory::create_element("queue", path[1]));
 
-	RefPtr<Element> e = GstUtils::find_element(path, model);
+	RefPtr<Object> o = GstUtils::find_element(path, model);
 
-	ASSERT_FALSE(e);
+	ASSERT_FALSE(o);
+}
+
+TEST(GstUtils, ShouldReturnsTheSameObject)
+{
+	std::vector<std::string> path = {};
+
+	auto model = Bin::create("main");
+	RefPtr<Object> o = GstUtils::find_element(path, model);
+
+	ASSERT_EQ(model, RefPtr<Bin>::cast_static(o));
 }

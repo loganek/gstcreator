@@ -11,19 +11,32 @@ using namespace Gst;
 using Glib::RefPtr;
 using namespace std;
 
-RefPtr<Element> GstUtils::find_element(vector<string> path,
-		const RefPtr<Bin>& model)
+RefPtr<Object> GstUtils::find_element(vector<string> path,
+		const RefPtr<Element>& model)
 {
-	RefPtr<Element> child = child.cast_static(model->get_child(path[0]));
+	if (path.size() == 0)
+		return model;
+
+	if (path.size() == 1)
+	{
+		if (model->is_bin())
+		{
+			RefPtr<Object> o = RefPtr<Bin>::cast_static(model)->get_child(path[0]);
+
+			if (o) return o;
+		}
+
+		return model->get_static_pad(path[0]);
+	}
+
+	if (!model->is_bin()) return RefPtr<Object>();
+
+	auto model_bin = RefPtr<Bin>::cast_static(model);
+	auto child = model_bin->get_child(path[0]);
 
 	if (!child)
 		return child;
 
-	if (path.size() == 1)
-		return child;
-	else if (!child->is_bin())
-		return RefPtr<Element>();
-
 	path.erase(path.begin());
-	return find_element(path, RefPtr<Bin>::cast_static(child));
+	return find_element(path, RefPtr<Element>::cast_static(child));
 }
