@@ -24,7 +24,8 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/Gui/include
 	${PROJECT_SOURCE_DIR}/LexPars/include
 	${PROJECT_SOURCE_DIR}/PluginsInspector/include
-	${PROJECT_SOURCE_DIR}/Utils/include)
+	${PROJECT_SOURCE_DIR}/Utils/include
+	${PROJECT_SOURCE_DIR}/Logic/include)
 
 add_subdirectory(src)
 add_subdirectory(test)

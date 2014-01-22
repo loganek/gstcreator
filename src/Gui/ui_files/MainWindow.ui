@@ -126,6 +126,13 @@
            <item>
             <widget class="QLineEdit" name="commandLineEdit"/>
            </item>
+           <item>
+            <widget class="QPushButton" name="runCommandPushButton">
+             <property name="text">
+              <string>Run Command</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>

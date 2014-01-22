@@ -9,7 +9,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QLayout>
-#include <QRadioButton>
+#include <QtWidgets>
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
@@ -30,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent)
 		reload_plugin_inspector();
 	});
 
+	connect(ui->runCommandPushButton, &QPushButton::pressed, [this](){
+		controller->parse(ui->commandLineEdit->text().toStdString());
+	});
+
 	reload_plugin_inspector();
 }
 
@@ -44,5 +48,8 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-
+void MainWindow::set_controller(std::shared_ptr<MainController> controller)
+{
+	this->controller = controller;
+}
 
