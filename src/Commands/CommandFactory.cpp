@@ -51,15 +51,18 @@ shared_ptr<Command> CommandFactory::process_method()
 {
 	if (method->get_name() == "add_element")
 	{
-		if (method->get_args().size() != 2)
+		if (method->get_args().size() != 2 && method->get_args().size() != 1)
 			throw runtime_error("invalid number of arguments");
 
 		if (!gst_object->is_bin())
 			throw runtime_error("invalid object type");
 
-		return shared_ptr<Command>(new AddCommand(
-				ElementFactory::create_element(method->get_args()[0]->get_name(),
-				method->get_args()[1]->get_name()), RefPtr<Bin>::cast_static(gst_object)));
+		auto element = (method->get_args().size() == 1) ?
+				ElementFactory::create_element(method->get_args()[0]->get_name()) :
+				ElementFactory::create_element(method->get_args()[0]->get_name(), method->get_args()[1]->get_name());
+
+		return shared_ptr<Command>(new AddCommand(element, RefPtr<Bin>::cast_static(gst_object)));
+
 	}
 	else if (method->get_name() == "add_pad")
 	{
