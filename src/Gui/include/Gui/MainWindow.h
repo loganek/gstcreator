@@ -13,6 +13,7 @@
 #include "Logic/MainController.h"
 #include <QMainWindow>
 #include <memory>
+#include <QtWidgets>
 
 namespace Ui{class MainWindow;}
 
@@ -29,10 +30,12 @@ private:
 	Ui::MainWindow *ui;
 	PluginsInspectorTreeView plugins_tree_view;
 	PluginsInspectorFilter filter;
+	QLineEdit* model_lineedit;
 
 	std::shared_ptr<MainController> controller;
 
 	void reload_plugin_inspector();
+	static void show_error(const std::string& err);
 
 };
 

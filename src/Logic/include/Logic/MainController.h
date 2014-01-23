@@ -12,14 +12,18 @@
 #include "GstController.h"
 #include "LexPars/Parser.h"
 
-class MainController : public Parser
+class MainController
 {
 private:
 	GstController gst_controller;
+	Parser parser;
 
 public:
 	MainController();
 	virtual ~MainController() {}
+
+	void update_current_model(const std::string& model_path);
+	void call_command(const std::string& cmd_text);
 };
 
 #endif /* MAINCONTROLLER_H_ */

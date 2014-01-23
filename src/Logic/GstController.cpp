@@ -20,7 +20,7 @@ void GstController::update_current_model(const RefPtr<Element>& model)
 {
 	RefPtr<Object> parent = model->get_parent();
 
-	while (parent && parent != model)
+	while (parent && parent != master_model)
 	{
 		parent = parent->get_parent();
 	}

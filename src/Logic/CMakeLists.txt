@@ -11,5 +11,5 @@ add_library(Logic
 	${LOGIC_HEADERS}
 )
 
-target_link_libraries(Logic LexPars)
+target_link_libraries(Logic LexPars Commands)
 
