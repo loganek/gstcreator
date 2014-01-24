@@ -151,8 +151,30 @@
      <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExport_Bin_To_Dot_File"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExport_Current_Bin_To_Dot">
+   <property name="text">
+    <string>Export Current Bin To Dot File...</string>
+   </property>
+  </action>
+  <action name="actionExport_Pipeline_To_Dot_File">
+   <property name="text">
+    <string>Export Pipeline To Dot File...</string>
+   </property>
+  </action>
+  <action name="actionExport_Bin_To_Dot_File">
+   <property name="text">
+    <string>Export Bin To Dot File...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

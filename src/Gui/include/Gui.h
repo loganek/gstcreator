@@ -10,5 +10,6 @@
 #define GUI_H_
 
 #include "Gui/MainWindow.h"
+#include "Gui/ExportToDotDialog.h"
 
 #endif /* GUI_H_ */

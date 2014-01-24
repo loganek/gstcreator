@@ -32,6 +32,9 @@ public:
 
 	void call_command(const std::string& cmd_text);
 	void set_gui(IGui* gui);
+
+	void export_bin_to_file(const std::string& filename,
+			int graph_details, bool is_master_model);
 };
 
 #endif /* MAINCONTROLLER_H_ */

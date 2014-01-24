@@ -8,6 +8,7 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "ExportToDotDialog.h"
 #include <QLayout>
 #include <QMessageBox>
 
@@ -86,4 +87,14 @@ void MainWindow::show_error(const std::string& err)
 void MainWindow::current_model_changed(const std::string& model_path)
 {
 	model_lineedit->setText(model_path.c_str());
+}
+
+void MainWindow::on_actionExport_Bin_To_Dot_File_triggered(bool)
+{
+	ExportToDotDialog dialog;
+
+	if (!dialog.exec())
+		return;
+
+	controller->export_bin_to_file(dialog.get_filename(), dialog.get_graph_details(), dialog.is_master_model());
 }

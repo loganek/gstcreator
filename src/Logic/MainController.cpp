@@ -72,3 +72,8 @@ void MainController::set_gui(IGui* gui)
 	this->gui = gui;
 }
 
+void MainController::export_bin_to_file(const std::string& filename,
+		int graph_details, bool is_master_model)
+{
+	gst_controller.export_bin_to_file(filename, graph_details, is_master_model);
+}

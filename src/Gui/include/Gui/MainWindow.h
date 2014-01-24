@@ -37,6 +37,8 @@ private:
 	void reload_plugin_inspector();
 	static void show_error(const std::string& err);
 
+private Q_SLOTS:
+	void on_actionExport_Bin_To_Dot_File_triggered(bool);
 };
 
 #endif /* MAINWINDOW_H_ */

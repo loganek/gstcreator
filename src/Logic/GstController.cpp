@@ -16,7 +16,7 @@ GstController::GstController(const Glib::RefPtr<Gst::Pipeline>& master_model)
   current_model(master_model)
 {}
 
-void GstController::update_current_model(const RefPtr<Element>& model)
+void GstController::update_current_model(const RefPtr<Bin>& model)
 {
 	RefPtr<Object> parent = model->get_parent();
 
@@ -36,7 +36,13 @@ Glib::RefPtr<Gst::Pipeline> GstController::get_master_model() const
 	return master_model;
 }
 
-Glib::RefPtr<Gst::Element> GstController::get_current_model() const
+Glib::RefPtr<Gst::Bin> GstController::get_current_model() const
 {
 	return current_model;
+}
+
+void GstController::export_bin_to_file(const std::string& filename, int graph_details, bool is_current_model)
+{
+	gst_debug_bin_to_dot_file(is_current_model ? current_model->gobj() : GST_BIN(master_model->gobj()),
+			(GstDebugGraphDetails)graph_details, filename.c_str());
 }
