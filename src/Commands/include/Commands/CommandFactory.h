@@ -28,6 +28,8 @@ private:
 
 	std::shared_ptr<StateCommand> process_state_command();
 
+	static void assert_argument_count(const std::vector<int>& expected, int actual);
+
 public:
 	CommandFactory(ObjectExpression* object, const Glib::RefPtr<Gst::Element>& model);
 	std::shared_ptr<Command> process();

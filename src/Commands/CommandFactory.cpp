@@ -8,6 +8,7 @@
 
 #include "CommandFactory.h"
 #include "Utils/GstUtils.h"
+#include "Utils/StringUtils.h"
 
 using Glib::RefPtr;
 using namespace Gst;
@@ -46,6 +47,20 @@ shared_ptr<Command> CommandFactory::process()
 	throw runtime_error("cannot process object");
 }
 
+void CommandFactory::assert_argument_count(const vector<int>& expected, int actual)
+{
+	if (find(expected.begin(), expected.end(), actual) == expected.end())
+	{
+		vector<string> str_vect;
+
+		for (auto e : expected)
+			str_vect.push_back(to_string(e));
+
+		throw runtime_error("Invalid number of arguments. Is: " + to_string(actual) +
+				" but expected " + StringUtils::join(str_vect, ", ") + ".");
+	}
+}
+
 shared_ptr<Command> CommandFactory::process_method()
 {
 	if (method->get_name() == "add_element")
@@ -58,8 +73,7 @@ shared_ptr<Command> CommandFactory::process_method()
 
 shared_ptr<AddCommand> CommandFactory::process_add_element()
 {
-	if (method->get_args().size() != 2 && method->get_args().size() != 1)
-		throw runtime_error("invalid number of arguments");
+	assert_argument_count({1, 2}, method->get_args().size());
 
 	if (!gst_object->is_bin())
 		throw runtime_error("invalid object type");
@@ -86,8 +100,7 @@ shared_ptr<AddCommand> CommandFactory::process_add_pad()
 {
 	int args_cnt = method->get_args().size();
 
-	if (args_cnt != 1 && args_cnt != 2)
-		throw runtime_error("invalid number of arguments");
+	assert_argument_count({1, 2}, method->get_args().size());
 
 	if (!gst_object->is_element())
 		throw runtime_error("invalid object type");
@@ -101,8 +114,7 @@ shared_ptr<AddCommand> CommandFactory::process_add_pad()
 
 std::shared_ptr<StateCommand> CommandFactory::process_state_command()
 {
-	if (method->get_args().size() != 1)
-		throw runtime_error("invalid number of arguments");
+	assert_argument_count({1}, method->get_args().size());
 
 	if (!gst_object->is_element())
 		throw runtime_error("invalid object type");
@@ -112,5 +124,5 @@ std::shared_ptr<StateCommand> CommandFactory::process_state_command()
 
 	StateType state; // TODO = from_string(method->get_args()[0]);
 
-	return shared_ptr<StateCommand>(new StateCommand(state, gst_object));
+	return shared_ptr<StateCommand>(new StateCommand(state, RefPtr<Element>::cast_static(gst_object)));
 }
