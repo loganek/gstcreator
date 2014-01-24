@@ -57,9 +57,20 @@ shared_ptr<Command> CommandFactory::process_method()
 		if (!gst_object->is_bin())
 			throw runtime_error("invalid object type");
 
-		auto element = (method->get_args().size() == 1) ?
-				ElementFactory::create_element(method->get_args()[0]->get_name()) :
-				ElementFactory::create_element(method->get_args()[0]->get_name(), method->get_args()[1]->get_name());
+		RefPtr<Element> element;
+
+		if (method->get_args().size() == 1)
+		{
+			// TODO it might be a gstreamer object or string
+			element = ElementFactory::create_element(method->get_args()[0]->get_name());
+		}
+		else
+		{
+			if (method->get_args()[1]->get_type() != ExpressionType::STRING)
+				throw runtime_error("second argument met be a string");
+
+			element = ElementFactory::create_element(method->get_args()[0]->get_name(), method->get_args()[1]->get_name());
+		}
 
 		return shared_ptr<Command>(new AddCommand(element, RefPtr<Bin>::cast_static(gst_object)));
 
