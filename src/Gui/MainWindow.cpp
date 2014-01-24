@@ -74,3 +74,8 @@ void MainWindow::show_error(const std::string& err)
 	QMessageBox messageBox;
 	messageBox.critical(0,"Error", err.c_str());
 }
+
+void MainWindow::current_model_changed(const std::string& model_path)
+{
+	model_lineedit->setText(model_path.c_str());
+}

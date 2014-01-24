@@ -10,14 +10,13 @@
 #define MAINWINDOW_H_
 
 #include "PluginsInspector.h"
-#include "Logic/MainController.h"
+#include "Logic/IGui.h"
 #include <QMainWindow>
-#include <memory>
 #include <QtWidgets>
 
 namespace Ui{class MainWindow;}
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public IGui
 {
 	Q_OBJECT
 public:
@@ -25,6 +24,7 @@ public:
 	virtual ~MainWindow();
 
 	void set_controller(std::shared_ptr<MainController> controller);
+	void current_model_changed(const std::string& model_path);
 
 private:
 	Ui::MainWindow *ui;
