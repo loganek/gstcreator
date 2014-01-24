@@ -66,6 +66,8 @@ shared_ptr<Command> CommandFactory::process_method()
 		return process_add_element();
 	else if (method->get_name() == "add_pad")
 		return process_add_pad();
+	else if (method->get_name() == "set_state")
+		return process_state_command();
 
 	throw runtime_error("invalid method");
 }
