@@ -133,9 +133,6 @@ shared_ptr<LinkCommand> CommandFactory::process_link_command()
 {
 	assert_argument_count({1}, method->get_args().size());
 
-	if (!gst_object->is_element())
-		throw runtime_error("invalid object type");
-
 	vector<string> path;
 	ObjectExpression* temp_obj = method->get_args()[0];
 
@@ -145,7 +142,7 @@ shared_ptr<LinkCommand> CommandFactory::process_link_command()
 		temp_obj = temp_obj->get_child();
 	}
 
-	RefPtr<Element> dest_element = RefPtr<Element>::cast_static(GstUtils::find_element(path, model));
+	RefPtr<Object> dest_obj = GstUtils::find_element(path, model);
 
-	return shared_ptr<LinkCommand>(new LinkCommand(dest_element, RefPtr<Element>::cast_static(gst_object)));
+	return shared_ptr<LinkCommand>(new LinkCommand(dest_obj, gst_object));
 }

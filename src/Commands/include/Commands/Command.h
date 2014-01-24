@@ -45,10 +45,10 @@ enum class StateType
 class Command
 {
 protected:
-	Glib::RefPtr<Gst::Element> model;
+	Glib::RefPtr<Gst::Object> model;
 
 public:
-	Command(const Glib::RefPtr<Gst::Element>& model);
+	Command(const Glib::RefPtr<Gst::Object>& model);
 	virtual ~Command() {}
 	virtual void run_command() = 0;
 	virtual CommandType get_type() = 0;

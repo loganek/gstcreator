@@ -19,7 +19,10 @@ StateCommand::StateCommand(StateType state, const RefPtr<Element>& model)
 
 void StateCommand::run_command()
 {
-	StateChangeReturn ret = model->set_state(static_cast<State>(state));
+	if (!model->is_element())
+		throw std::runtime_error("invalid object type");
+
+	StateChangeReturn ret = RefPtr<Element>::cast_static(model)->set_state(static_cast<State>(state));
 
 	if (ret == STATE_CHANGE_FAILURE)
 		throw std::runtime_error("cannot change state");

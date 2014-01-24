@@ -8,7 +8,7 @@
 
 #include "Command.h"
 
-Command::Command(const Glib::RefPtr<Gst::Element>& model)
+Command::Command(const Glib::RefPtr<Gst::Object>& model)
 : model(model)
 {
 }

@@ -27,9 +27,9 @@ void AddCommand::run_command()
 		RefPtr<Bin>::cast_static(model)->add(RefPtr<Element>::cast_static(item));
 	}
 
-	else if (item->is_pad())
+	else if (item->is_pad() && model->is_element())
 	{
-		if (!model->add_pad(RefPtr<Pad>::cast_static(item)))
+		if (!RefPtr<Element>::cast_static(model)->add_pad(RefPtr<Pad>::cast_static(item)))
 			throw std::runtime_error("cannot add pad");
 	}
 	else
