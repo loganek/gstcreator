@@ -17,6 +17,8 @@ class StringUtils
 public:
 	static std::vector<std::string> split(const std::string& text,
 			const std::string& delim);
+	static std::string join(const std::vector<std::string>& vect,
+			const std::string& delim);
 };
 
 #endif /* STRINGUTILS_H_ */

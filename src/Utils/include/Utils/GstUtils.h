@@ -17,6 +17,8 @@ class GstUtils
 public:
 	static Glib::RefPtr<Gst::Object> find_element(
 			std::vector<std::string> path, const Glib::RefPtr<Gst::Element>& model);
+	static std::vector<std::string> get_path(const Glib::RefPtr<Gst::Object>& obj,
+			const Glib::RefPtr<Gst::Element>& model);
 };
 
 #endif /* GSTUTILS_H_ */

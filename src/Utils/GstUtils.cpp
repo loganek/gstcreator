@@ -40,3 +40,30 @@ RefPtr<Object> GstUtils::find_element(vector<string> path,
 	path.erase(path.begin());
 	return find_element(path, RefPtr<Element>::cast_static(child));
 }
+
+vector<string> GstUtils::get_path(const RefPtr<Object>& obj,
+		const RefPtr<Element>& model)
+{
+	RefPtr<Element> current_element;
+	vector<string> path;
+
+	if (obj->is_pad())
+	{
+		current_element = RefPtr<Pad>::cast_static(obj)->get_parent_element();
+		path.push_back(obj->get_name().c_str());
+	}
+	else if (!obj->is_element())
+		throw std::runtime_error("cannot get path of non-element and non-pad object");
+	else
+		current_element = RefPtr<Element>::cast_static(obj);
+
+	do
+	{
+		path.push_back(current_element->get_name().c_str());
+		current_element = RefPtr<Element>::cast_static(current_element->get_parent());
+	} while (current_element);
+
+	reverse(path.begin(), path.end());
+
+	return path;
+}

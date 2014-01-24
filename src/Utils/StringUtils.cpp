@@ -27,3 +27,18 @@ vector<string> StringUtils::split(const string& text, const string& delim)
 	}
 	return values;
 }
+
+string StringUtils::join(const vector<string>& vect, const string& delim)
+{
+	string out;
+
+	if (vect.empty())
+		return out;
+
+	for (size_t i = 0; i < vect.size() - 1; i++)
+		out += vect[i] + delim;
+
+	out += vect.back();
+
+	return out;
+}
