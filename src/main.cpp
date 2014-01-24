@@ -18,6 +18,7 @@ int main(int argc, char** argv)
 	MainWindow w;
 	std::shared_ptr<MainController> controller(new MainController());
 	w.set_controller(controller);
+	controller->set_gui(&w);
 	w.show();
 
 	return a.exec();
