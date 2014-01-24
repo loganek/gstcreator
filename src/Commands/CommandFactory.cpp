@@ -7,7 +7,6 @@
  */
 
 #include "CommandFactory.h"
-#include "Commands.h"
 #include "Utils/GstUtils.h"
 
 using Glib::RefPtr;
@@ -15,8 +14,8 @@ using namespace Gst;
 using namespace std;
 
 CommandFactory::CommandFactory(ObjectExpression* object, const RefPtr<Element>& model)
-: object(object),
-  model(model),
+: model(model),
+  object(object),
   method(nullptr)
 {
 }
@@ -50,47 +49,68 @@ shared_ptr<Command> CommandFactory::process()
 shared_ptr<Command> CommandFactory::process_method()
 {
 	if (method->get_name() == "add_element")
-	{
-		if (method->get_args().size() != 2 && method->get_args().size() != 1)
-			throw runtime_error("invalid number of arguments");
-
-		if (!gst_object->is_bin())
-			throw runtime_error("invalid object type");
-
-		RefPtr<Element> element;
-
-		if (method->get_args().size() == 1)
-		{
-			// TODO it might be a gstreamer object or string
-			element = ElementFactory::create_element(method->get_args()[0]->get_name());
-		}
-		else
-		{
-			if (method->get_args()[1]->get_type() != ExpressionType::STRING)
-				throw runtime_error("second argument met be a string");
-
-			element = ElementFactory::create_element(method->get_args()[0]->get_name(), method->get_args()[1]->get_name());
-		}
-
-		return shared_ptr<Command>(new AddCommand(element, RefPtr<Bin>::cast_static(gst_object)));
-
-	}
+		return process_add_element();
 	else if (method->get_name() == "add_pad")
-	{
-		int args_cnt = method->get_args().size();
-
-		if (args_cnt != 1 && args_cnt != 2)
-			throw runtime_error("invalid number of arguments");
-
-		if (!gst_object->is_element())
-			throw runtime_error("invalid object type");
-
-		RefPtr<Element> el = el.cast_static(gst_object);
-		RefPtr<PadTemplate> tpl = el->get_pad_template(method->get_args()[0]->get_name().c_str());
-		RefPtr<Pad> pad = (args_cnt == 1) ? Pad::create(tpl) : Pad::create(tpl, method->get_args()[1]->get_name().c_str());
-
-		return shared_ptr<Command>(new AddCommand(pad, el));
-	}
+		return process_add_pad();
 
 	throw runtime_error("invalid method");
+}
+
+shared_ptr<AddCommand> CommandFactory::process_add_element()
+{
+	if (method->get_args().size() != 2 && method->get_args().size() != 1)
+		throw runtime_error("invalid number of arguments");
+
+	if (!gst_object->is_bin())
+		throw runtime_error("invalid object type");
+
+	RefPtr<Element> element;
+
+	if (method->get_args().size() == 1)
+	{
+		// TODO it might be a gstreamer object or string
+		element = ElementFactory::create_element(method->get_args()[0]->get_name());
+	}
+	else
+	{
+		if (method->get_args()[1]->get_type() != ExpressionType::STRING)
+			throw runtime_error("second argument met be a string");
+
+		element = ElementFactory::create_element(method->get_args()[0]->get_name(), method->get_args()[1]->get_name());
+	}
+
+	return shared_ptr<AddCommand>(new AddCommand(element, RefPtr<Bin>::cast_static(gst_object)));
+}
+
+shared_ptr<AddCommand> CommandFactory::process_add_pad()
+{
+	int args_cnt = method->get_args().size();
+
+	if (args_cnt != 1 && args_cnt != 2)
+		throw runtime_error("invalid number of arguments");
+
+	if (!gst_object->is_element())
+		throw runtime_error("invalid object type");
+
+	RefPtr<Element> el = el.cast_static(gst_object);
+	RefPtr<PadTemplate> tpl = el->get_pad_template(method->get_args()[0]->get_name().c_str());
+	RefPtr<Pad> pad = (args_cnt == 1) ? Pad::create(tpl) : Pad::create(tpl, method->get_args()[1]->get_name().c_str());
+
+	return shared_ptr<AddCommand>(new AddCommand(pad, el));
+}
+
+std::shared_ptr<StateCommand> CommandFactory::process_state_command()
+{
+	if (method->get_args().size() != 1)
+		throw runtime_error("invalid number of arguments");
+
+	if (!gst_object->is_element())
+		throw runtime_error("invalid object type");
+
+	if (method->get_args()[0]->get_type() != ExpressionType::STRING)
+		throw runtime_error("argument met be a string");
+
+	StateType state; // TODO = from_string(method->get_args()[0]);
+
+	return shared_ptr<StateCommand>(new StateCommand(state, gst_object));
 }

@@ -10,7 +10,7 @@
 #define COMMANDFACTORY_H_
 
 #include "LexPars/Expression.h"
-#include "Command.h"
+#include "Commands.h"
 #include <gstreamermm.h>
 #include <memory>
 
@@ -22,6 +22,11 @@ private:
 	ObjectExpression* object;
 	MethodExpression* method;
 	std::shared_ptr<Command> process_method();
+
+	std::shared_ptr<AddCommand> process_add_element();
+	std::shared_ptr<AddCommand> process_add_pad();
+
+	std::shared_ptr<StateCommand> process_state_command();
 
 public:
 	CommandFactory(ObjectExpression* object, const Glib::RefPtr<Gst::Element>& model);
