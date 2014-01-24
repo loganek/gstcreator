@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
 
 	connect(ui->pluginInspectorFilterLineEdit, SIGNAL(textChanged(QString)),
-				&filter, SLOT(setFilterFixedString(QString)));
+			&filter, SLOT(setFilterFixedString(QString)));
 
 	connect(ui->inspectorByKlassRadioButton, &QRadioButton::toggled, [this](bool) {
 		reload_plugin_inspector();
@@ -30,7 +30,15 @@ MainWindow::MainWindow(QWidget *parent)
 	});
 
 	connect(ui->runCommandPushButton, &QPushButton::pressed, [this](){
-		controller->call_command(ui->commandLineEdit->text().toStdString());
+		try
+		{
+			controller->call_command(ui->commandLineEdit->text().toStdString());
+		}
+		catch (const std::runtime_error& ex)
+		{
+			show_error(ex.what());
+		}
+
 	});
 
 	ui->statusbar->addWidget(new QLabel("Current model: "));

@@ -13,5 +13,6 @@
 #include "Commands/AddCommand.h"
 #include "Commands/StateCommand.h"
 #include "Commands/CommandFactory.h"
+#include "Commands/LinkCommand.h"
 
 #endif /* COMMANDS_H_ */

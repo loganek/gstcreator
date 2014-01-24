@@ -23,7 +23,6 @@ CommandFactory::CommandFactory(ObjectExpression* object, const RefPtr<Element>& 
 shared_ptr<Command> CommandFactory::process()
 {
 	vector<string> path;
-	RefPtr<Element> current_model = model;
 	ObjectExpression* temp_obj = object;
 
 	while (temp_obj->get_child() != nullptr && !temp_obj->is_method())
@@ -68,6 +67,8 @@ shared_ptr<Command> CommandFactory::process_method()
 		return process_add_pad();
 	else if (method->get_name() == "set_state")
 		return process_state_command();
+	else if (method->get_name() == "link")
+		return process_link_command();
 
 	throw runtime_error("invalid method");
 }
@@ -113,7 +114,7 @@ shared_ptr<AddCommand> CommandFactory::process_add_pad()
 	return shared_ptr<AddCommand>(new AddCommand(pad, el));
 }
 
-std::shared_ptr<StateCommand> CommandFactory::process_state_command()
+shared_ptr<StateCommand> CommandFactory::process_state_command()
 {
 	assert_argument_count({1}, method->get_args().size());
 
@@ -126,4 +127,25 @@ std::shared_ptr<StateCommand> CommandFactory::process_state_command()
 	StateType state = EnumUtils<StateType>::string_to_enum(method->get_args()[0]->get_name());
 
 	return shared_ptr<StateCommand>(new StateCommand(state, RefPtr<Element>::cast_static(gst_object)));
+}
+
+shared_ptr<LinkCommand> CommandFactory::process_link_command()
+{
+	assert_argument_count({1}, method->get_args().size());
+
+	if (!gst_object->is_element())
+		throw runtime_error("invalid object type");
+
+	vector<string> path;
+	ObjectExpression* temp_obj = method->get_args()[0];
+
+	while (temp_obj != nullptr)
+	{
+		path.push_back(temp_obj->get_name());
+		temp_obj = temp_obj->get_child();
+	}
+
+	RefPtr<Element> dest_element = RefPtr<Element>::cast_static(GstUtils::find_element(path, model));
+
+	return shared_ptr<LinkCommand>(new LinkCommand(dest_element, RefPtr<Element>::cast_static(gst_object)));
 }

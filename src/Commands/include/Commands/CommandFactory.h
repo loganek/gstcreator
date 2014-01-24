@@ -25,8 +25,8 @@ private:
 
 	std::shared_ptr<AddCommand> process_add_element();
 	std::shared_ptr<AddCommand> process_add_pad();
-
 	std::shared_ptr<StateCommand> process_state_command();
+	std::shared_ptr<LinkCommand> process_link_command();
 
 	static void assert_argument_count(const std::vector<int>& expected, int actual);
 
