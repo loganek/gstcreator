@@ -17,6 +17,30 @@ enum class CommandType
 	STATE
 };
 
+
+// todo move it to a lexer
+
+enum class Token
+{
+	INVALID = 0,
+	IDENTIFIER = 1,
+	OPERATOR = 2,
+	VAR_DEF = 4,
+	EOL = 8,
+};
+
+// todo move it to a StateCommand
+
+enum class StateType
+{
+	VOID_PENDING = 0,
+	NULL_STATE,
+	READY,
+	PAUSED,
+	PLAYING
+};
+
+
 class Command
 {
 protected:

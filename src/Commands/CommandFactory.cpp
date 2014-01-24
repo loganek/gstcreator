@@ -7,8 +7,7 @@
  */
 
 #include "CommandFactory.h"
-#include "Utils/GstUtils.h"
-#include "Utils/StringUtils.h"
+#include "Utils.h"
 
 using Glib::RefPtr;
 using namespace Gst;
@@ -122,7 +121,7 @@ std::shared_ptr<StateCommand> CommandFactory::process_state_command()
 	if (method->get_args()[0]->get_type() != ExpressionType::STRING)
 		throw runtime_error("argument met be a string");
 
-	StateType state; // TODO = from_string(method->get_args()[0]);
+	StateType state = EnumUtils<StateType>::string_to_enum(method->get_args()[0]->get_name());
 
 	return shared_ptr<StateCommand>(new StateCommand(state, RefPtr<Element>::cast_static(gst_object)));
 }

@@ -7,6 +7,7 @@
  */
 
 #include "Lexer.h"
+#include "Utils/EnumUtils.h"
 #include <algorithm>
 #include <stdexcept>
 
@@ -83,8 +84,8 @@ Token Lexer::get_next_token(Token expected)
 	current_token = get_token();
 
 	if ((current_token & expected) == Token::INVALID)
-		// TODO token to human readable text conversion
-		throw std::runtime_error("Expected " + std::to_string((int)expected) + " token, but " + std::to_string((int)current_token) + " occurred");
+		throw std::runtime_error("Expected " + EnumUtils<Token>::enum_to_string(expected) +
+				" token, but " + EnumUtils<Token>::enum_to_string(current_token) + " occurred");
 
 	return current_token;
 }

@@ -1,3 +1,14 @@
+set(UTILS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Utils)
+
+execute_process(
+	COMMAND perl
+	${UTILS_DIR}/enum_string_generator.pl
+	${UTILS_DIR}/../Commands/include/Commands/Command.h
+	${UTILS_DIR}/include/Utils/EnumUtils.h
+	${UTILS_DIR}/EnumUtils.cpp
+	 
+)
+
 add_subdirectory(Commands)
 add_subdirectory(Gui)
 add_subdirectory(LexPars)

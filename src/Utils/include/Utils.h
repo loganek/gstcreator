@@ -11,5 +11,6 @@
 
 #include "Utils/GstUtils.h"
 #include "Utils/StringUtils.h"
+#include "Utils/EnumUtils.h"
 
 #endif /* UTILS_H_ */

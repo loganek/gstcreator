@@ -8,6 +8,7 @@
 
 #include "StringUtils.h"
 #include <cstring>
+#include <algorithm>
 
 using namespace std;
 
@@ -41,4 +42,16 @@ string StringUtils::join(const vector<string>& vect, const string& delim)
 	out += vect.back();
 
 	return out;
+}
+
+string StringUtils::to_upper(string text)
+{
+	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
+	return text;
+}
+
+string StringUtils::to_lower(string text)
+{
+	transform(text.begin(), text.end(), text.begin(), ::tolower);
+	return text;
 }

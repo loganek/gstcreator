@@ -11,15 +11,8 @@
 
 #include <string>
 #include <vector>
+#include "Commands/Command.h" // todo temporary solution, this include should be unnecessary
 
-enum class Token
-{
-	INVALID = 0,
-	IDENTIFIER = 1,
-	OPERATOR = 2,
-	VAR_DEF = 4,
-	EOL = 8,
-};
 
 Token operator|(Token l, Token r);
 Token operator&(Token l, Token r);

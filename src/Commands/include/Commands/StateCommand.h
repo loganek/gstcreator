@@ -11,15 +11,6 @@
 
 #include "Command.h"
 
-enum class StateType : int
-{
-	VOID_PENDING = 0,
-	NULL_STATE,
-	READY,
-	PAUSED,
-	PLAYING
-};
-
 class StateCommand : public Command
 {
 private:

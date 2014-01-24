@@ -19,6 +19,9 @@ public:
 			const std::string& delim);
 	static std::string join(const std::vector<std::string>& vect,
 			const std::string& delim);
+
+	static std::string to_upper(std::string text);
+	static std::string to_lower(std::string text);
 };
 
 #endif /* STRINGUTILS_H_ */
