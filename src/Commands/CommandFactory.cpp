@@ -29,7 +29,7 @@ shared_ptr<Command> CommandFactory::process()
 
 	while (temp_obj->get_child() != nullptr && !temp_obj->is_method())
 	{
-		path.push_back(object->get_name());
+		path.push_back(temp_obj->get_name());
 		temp_obj = temp_obj->get_child();
 	}
 

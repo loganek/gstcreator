@@ -27,7 +27,7 @@ void MainController::safe_call(T* object, void (T::* fun)(Args...), Args... args
 
 void MainController::update_current_model(const std::string& model_path)
 {
-	std::vector<std::string> path = StringUtils::split(model_path, ":");
+	std::vector<std::string> path = StringUtils::split(model_path.c_str(), ":");
 
 	Glib::RefPtr<Gst::Object> model = GstUtils::find_element(path, gst_controller.get_master_model());
 	std::vector<std::string> vec_path =

@@ -25,7 +25,7 @@ void GstController::update_current_model(const RefPtr<Element>& model)
 		parent = parent->get_parent();
 	}
 
-	if (!parent)
+	if (!parent && model != master_model)
 		throw std::runtime_error("Model is not an descendant of a master model");
 
 	current_model = model;
