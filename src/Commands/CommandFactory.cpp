@@ -69,6 +69,10 @@ shared_ptr<Command> CommandFactory::process_method()
 		return process_state_command();
 	else if (method->get_name() == "link")
 		return process_link_command();
+	if (method->get_name() == "remove_element")
+		return process_remove_element();
+	else if (method->get_name() == "remove_pad")
+		return process_remove_pad();
 
 	throw runtime_error("invalid method");
 }
@@ -145,4 +149,49 @@ shared_ptr<LinkCommand> CommandFactory::process_link_command()
 	RefPtr<Object> dest_obj = GstUtils::find_element(path, model);
 
 	return shared_ptr<LinkCommand>(new LinkCommand(dest_obj, gst_object));
+}
+
+shared_ptr<RemoveCommand> CommandFactory::process_remove_element()
+{
+	assert_argument_count({1}, method->get_args().size());
+
+	if (!gst_object->is_bin())
+		throw runtime_error("invalid object type");
+
+	vector<string> path;
+	ObjectExpression* temp_obj = method->get_args()[0];
+
+	while (temp_obj != nullptr)
+	{
+		path.push_back(temp_obj->get_name());
+		temp_obj = temp_obj->get_child();
+	}
+
+	auto element = RefPtr<Element>::cast_static(GstUtils::find_element(path, model));
+
+	return shared_ptr<RemoveCommand>(new RemoveCommand(element, RefPtr<Bin>::cast_static(gst_object)));
+}
+
+shared_ptr<RemoveCommand> CommandFactory::process_remove_pad()
+{
+	assert_argument_count({1}, method->get_args().size());
+
+	if (!gst_object->is_element())
+		throw runtime_error("invalid object type");
+
+	vector<string> path;
+	ObjectExpression* temp_obj = method->get_args()[0];
+
+	while (temp_obj != nullptr)
+	{
+		path.push_back(temp_obj->get_name());
+		temp_obj = temp_obj->get_child();
+	}
+
+	RefPtr<Object> pad_obj = GstUtils::find_element(path, model);
+
+	if (!pad_obj->is_pad())
+		throw runtime_error("invalid object type");
+
+	return shared_ptr<RemoveCommand>(new RemoveCommand(RefPtr<Pad>::cast_static(pad_obj), RefPtr<Element>::cast_static(gst_object)));
 }

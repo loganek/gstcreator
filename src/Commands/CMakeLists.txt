@@ -4,6 +4,7 @@ set(COMMANDS_HEADERS
 	include/Commands/StateCommand.h
 	include/Commands/CommandFactory.h
 	include/Commands/LinkCommand.h
+	include/Commands/RemoveCommand.h
 )
 
 add_library(Commands
@@ -12,6 +13,7 @@ add_library(Commands
 	StateCommand.cpp
 	CommandFactory.cpp
 	LinkCommand.cpp
+	RemoveCommand.cpp
 	${COMMANDS_HEADERS})
 	
 target_link_libraries(Commands ${GSTMM_LIBRARIES})
