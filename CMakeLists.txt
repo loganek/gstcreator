@@ -21,6 +21,7 @@ INCLUDE(FindPkgConfig)
 
 include_directories(
 	${PROJECT_SOURCE_DIR}/Commands/include
+	${PROJECT_SOURCE_DIR}/qnelibrary/include
 	${PROJECT_SOURCE_DIR}/Gui/include
 	${PROJECT_SOURCE_DIR}/LexPars/include
 	${PROJECT_SOURCE_DIR}/PluginsInspector/include
