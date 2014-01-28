@@ -14,7 +14,9 @@ using namespace Gst;
 GstController::GstController(const Glib::RefPtr<Gst::Pipeline>& master_model)
 : master_model(master_model),
   current_model(master_model)
-{}
+{
+	set_watch_method(master_model);
+}
 
 void GstController::update_current_model(const RefPtr<Bin>& model)
 {
@@ -45,4 +47,45 @@ void GstController::export_bin_to_file(const std::string& filename, int graph_de
 {
 	gst_debug_bin_to_dot_file(is_current_model ? current_model->gobj() : GST_BIN(master_model->gobj()),
 			(GstDebugGraphDetails)graph_details, filename.c_str());
+}
+
+void GstController::register_model_observer(IModelObserver* observer)
+{
+	if (!observers.insert(observer).second)
+		throw std::runtime_error("Cannot register observer");
+}
+
+void GstController::unregister_model_observer(IModelObserver* observer)
+{
+	if (!observers.erase(observer))
+		throw std::runtime_error("Cannot unregister observer");
+}
+
+void GstController::set_watch_method(const RefPtr<Element>& element)
+{
+	element->signal_pad_added().connect([this](const RefPtr<Pad>& pad){
+		notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_added, pad);
+
+		pad->signal_linked().connect([this](const RefPtr<Pad>& proxy_pad){
+			notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_linked, proxy_pad);
+		});
+		pad->signal_unlinked().connect([this](const RefPtr<Pad>& proxy_pad){
+			notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_unlinked, proxy_pad);
+		});
+	});
+	element->signal_pad_removed().connect([this](const RefPtr<Pad>& pad){
+		notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_removed, pad);
+	});
+
+	if (element->is_bin())
+	{
+		RefPtr<Bin> bin = bin.cast_static(element);
+		bin->signal_element_added().connect([this](const RefPtr<Element>& element){
+			notify_observers<const RefPtr<Element>&>(&IModelObserver::element_added, element);
+			set_watch_method(element);
+		});
+		bin->signal_element_added().connect([this](const RefPtr<Element>& element){
+			notify_observers<const RefPtr<Element>&>(&IModelObserver::element_removed, element);
+		});
+	}
 }
