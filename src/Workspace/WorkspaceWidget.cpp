@@ -33,4 +33,13 @@ void WorkspaceWidget::resizeEvent(QResizeEvent * event)
 void WorkspaceWidget::set_model(const Glib::RefPtr<Gst::Bin>& model)
 {
 	filter->set_model(model);
+	current_model = model;
+}
+
+void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
+{
+	if (element->get_parent() != current_model)
+		return;
+
+	// todo add blocks to a workspace
 }

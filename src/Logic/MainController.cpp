@@ -76,3 +76,13 @@ Glib::RefPtr<Gst::Bin> MainController::get_current_model() const
 {
 	return gst_controller.get_current_model();
 }
+
+void MainController::register_model_observer(IModelObserver* observer)
+{
+	gst_controller.register_model_observer(observer);
+}
+
+void MainController::unregister_model_observer(IModelObserver* observer)
+{
+	gst_controller.unregister_model_observer(observer);
+}

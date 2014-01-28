@@ -34,6 +34,9 @@ public:
 			int graph_details, bool is_master_model);
 
 	Glib::RefPtr<Gst::Bin> get_current_model() const;
+
+	void register_model_observer(IModelObserver* observer);
+	void unregister_model_observer(IModelObserver* observer);
 };
 
 #endif /* MAINCONTROLLER_H_ */

@@ -81,6 +81,7 @@ void MainWindow::set_controller(std::shared_ptr<MainController> controller)
 {
 	this->controller = controller;
 	safe_call<WorkspaceWidget, void, const Glib::RefPtr<Gst::Bin>&>(workspace, &WorkspaceWidget::set_model, controller->get_current_model());
+	safe_call<MainController, void, IModelObserver*>(controller.get(), &MainController::register_model_observer, static_cast<IModelObserver*>(workspace));
 }
 
 void MainWindow::show_error(const std::string& err)
