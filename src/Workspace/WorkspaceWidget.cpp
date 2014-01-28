@@ -30,3 +30,7 @@ void WorkspaceWidget::resizeEvent(QResizeEvent * event)
 	view->resize(event->size());
 }
 
+void WorkspaceWidget::set_model(const Glib::RefPtr<Gst::Bin>& model)
+{
+	filter->set_model(model);
+}

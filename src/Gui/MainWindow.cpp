@@ -10,6 +10,7 @@
 #include "ui_MainWindow.h"
 #include "Workspace/WorkspaceWidget.h"
 #include "ExportToDotDialog.h"
+#include "common.h"
 #include <QLayout>
 #include <QMessageBox>
 
@@ -18,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
   ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	ui->workspaceFrame->layout()->addWidget(new WorkspaceWidget);
+	workspace = new WorkspaceWidget();
+	ui->workspaceFrame->layout()->addWidget(workspace);
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
 
@@ -78,6 +80,7 @@ MainWindow::~MainWindow()
 void MainWindow::set_controller(std::shared_ptr<MainController> controller)
 {
 	this->controller = controller;
+	safe_call<WorkspaceWidget, void, const Glib::RefPtr<Gst::Bin>&>(workspace, &WorkspaceWidget::set_model, controller->get_current_model());
 }
 
 void MainWindow::show_error(const std::string& err)
@@ -89,6 +92,7 @@ void MainWindow::show_error(const std::string& err)
 void MainWindow::current_model_changed(const std::string& model_path)
 {
 	model_lineedit->setText(model_path.c_str());
+	safe_call<WorkspaceWidget, void, const Glib::RefPtr<Gst::Bin>&>(workspace, &WorkspaceWidget::set_model, controller->get_current_model());
 }
 
 void MainWindow::on_actionExport_Bin_To_Dot_File_triggered(bool)

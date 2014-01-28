@@ -11,18 +11,12 @@
 #include "Utils/GstUtils.h"
 #include "Commands/CommandFactory.h"
 #include "IGui.h"
+#include "common.h"
 
 MainController::MainController()
 : gst_controller(Gst::Pipeline::create()),
   gui(nullptr)
 {
-}
-
-template<typename T, typename Ret, typename ...Args>
-void MainController::safe_call(T* object, void (T::* fun)(Args...), Args... args)
-{
-	if (object != nullptr)
-		(object->*fun)(args...);
 }
 
 void MainController::update_current_model(const std::string& model_path)
@@ -76,4 +70,9 @@ void MainController::export_bin_to_file(const std::string& filename,
 		int graph_details, bool is_master_model)
 {
 	gst_controller.export_bin_to_file(filename, graph_details, is_master_model);
+}
+
+Glib::RefPtr<Gst::Bin> MainController::get_current_model() const
+{
+	return gst_controller.get_current_model();
 }

@@ -11,4 +11,11 @@
 
 #define DRAG_DROP_FORMAT "application/x-DraggedGstBlock-DragAndDrop"
 
+template<typename T, typename Ret, typename ...Args>
+static void safe_call(T* object, void (T::* fun)(Args...), Args... args)
+{
+	if (object != nullptr)
+		(object->*fun)(args...);
+}
+
 #endif /* COMMON_H_ */

@@ -11,6 +11,7 @@
 
 #include "PluginsInspector.h"
 #include "Logic/IGui.h"
+#include "Workspace/WorkspaceWidget.h"
 #include <QMainWindow>
 #include <QtWidgets>
 
@@ -26,16 +27,17 @@ public:
 	void set_controller(std::shared_ptr<MainController> controller);
 	void current_model_changed(const std::string& model_path);
 
+	static void show_error(const std::string& err);
 private:
 	Ui::MainWindow *ui;
 	PluginsInspectorTreeView plugins_tree_view;
 	PluginsInspectorFilter filter;
 	QLineEdit* model_lineedit;
+	WorkspaceWidget* workspace;
 
 	std::shared_ptr<MainController> controller;
 
 	void reload_plugin_inspector();
-	static void show_error(const std::string& err);
 
 private Q_SLOTS:
 	void on_actionExport_Bin_To_Dot_File_triggered(bool);

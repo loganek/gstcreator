@@ -21,9 +21,6 @@ private:
 	Parser parser;
 	IGui* gui;
 
-	template<typename T, typename Ret, typename ...Args>
-	static void safe_call(T* object, void (T::* fun)(Args...), Args... args);
-
 public:
 	MainController();
 	virtual ~MainController() {}
@@ -35,6 +32,8 @@ public:
 
 	void export_bin_to_file(const std::string& filename,
 			int graph_details, bool is_master_model);
+
+	Glib::RefPtr<Gst::Bin> get_current_model() const;
 };
 
 #endif /* MAINCONTROLLER_H_ */

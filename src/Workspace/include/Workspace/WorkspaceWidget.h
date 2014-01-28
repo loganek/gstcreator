@@ -12,6 +12,7 @@
 #include "EventFilter.h"
 #include <QWidget>
 #include <QGraphicsView>
+#include <gstreamermm.h>
 
 class WorkspaceWidget : public QWidget
 {
@@ -25,6 +26,7 @@ private:
 public:
 	explicit WorkspaceWidget(QWidget* parent = 0);
 	virtual ~WorkspaceWidget();
+	void set_model(const Glib::RefPtr<Gst::Bin>& model);
 
 	void resizeEvent(QResizeEvent * event);
 
