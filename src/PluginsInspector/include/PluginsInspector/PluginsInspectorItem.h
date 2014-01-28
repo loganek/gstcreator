@@ -15,12 +15,13 @@
 class PluginsInspectorItem
 {
 private:
+	bool fact;
 	std::vector<PluginsInspectorItem*> children;
 	PluginsInspectorItem* parent_item;
 	std::string factory_name;
 
 public:
-	explicit PluginsInspectorItem(const std::string& name, PluginsInspectorItem *parent = 0);
+	explicit PluginsInspectorItem(bool is_factory, const std::string& name, PluginsInspectorItem *parent = 0);
 	virtual ~PluginsInspectorItem();
 
 	void append_child(PluginsInspectorItem* child);
@@ -31,6 +32,7 @@ public:
 	PluginsInspectorItem* parent();
 
 	virtual std::string get_name() const;
+	bool is_factory() const;
 };
 
 #endif /* PLUGINSINSPECTORITEM_H_ */

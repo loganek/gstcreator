@@ -9,8 +9,9 @@
 #include "PluginsInspectorItem.h"
 #include <algorithm>
 
-PluginsInspectorItem::PluginsInspectorItem(const std::string& name, PluginsInspectorItem* parent)
-: parent_item(parent),
+PluginsInspectorItem::PluginsInspectorItem(bool is_factory, const std::string& name, PluginsInspectorItem* parent)
+: fact(is_factory),
+  parent_item(parent),
   factory_name(name)
 {
 }
@@ -54,4 +55,9 @@ std::string PluginsInspectorItem::get_name() const
 	static std::string header_name = "Factory Name";
 
 	return factory_name.empty() ? header_name : factory_name;
+}
+
+bool PluginsInspectorItem::is_factory() const
+{
+	return fact;
 }

@@ -20,13 +20,15 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 INCLUDE(FindPkgConfig)
 
 include_directories(
+	${PROJECT_SOURCE_DIR}
 	${PROJECT_SOURCE_DIR}/Commands/include
 	${PROJECT_SOURCE_DIR}/qnelibrary/include
 	${PROJECT_SOURCE_DIR}/Gui/include
 	${PROJECT_SOURCE_DIR}/LexPars/include
 	${PROJECT_SOURCE_DIR}/PluginsInspector/include
 	${PROJECT_SOURCE_DIR}/Utils/include
-	${PROJECT_SOURCE_DIR}/Logic/include)
+	${PROJECT_SOURCE_DIR}/Logic/include
+	${PROJECT_SOURCE_DIR}/Workspace/include)
 
 add_subdirectory(src)
 add_subdirectory(test)

@@ -16,6 +16,7 @@ add_subdirectory(PluginsInspector)
 add_subdirectory(Utils)
 add_subdirectory(Logic)
 add_subdirectory(qnelibrary)
+add_subdirectory(Workspace)
 
 add_executable(gstcreator main.cpp)
 

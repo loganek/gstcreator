@@ -16,7 +16,7 @@ using namespace std;
 PluginsInspectorModel::PluginsInspectorModel(FillInspectorMethod method, QObject* parent)
 : QAbstractItemModel(parent)
 {
-	root_item = new PluginsInspectorItem(string());
+	root_item = new PluginsInspectorItem(false, string());
 
 	RefPtr<Registry> registry = Registry::get();
 
@@ -54,7 +54,7 @@ PluginsInspectorItem* PluginsInspectorModel::find_parent(PluginsInspectorItem* c
 
 	for (size_t i = klass_it; i < klasses.size(); i++)
 	{
-		current_item->append_child(ret_item = new PluginsInspectorItem(klasses[i], current_item));
+		current_item->append_child(ret_item = new PluginsInspectorItem(false, klasses[i], current_item));
 		current_item = ret_item;
 	}
 
@@ -76,19 +76,19 @@ void PluginsInspectorModel::fill_inspector_by_klass(const RefPtr<Plugin>& plugin
 					StringUtils::split(factory->get_metadata("klass").c_str(), "/");
 
 			PluginsInspectorItem* parent = find_parent(root_item, klasses, 0);
-			parent->append_child(new PluginsInspectorItem(factory->get_name(), parent));
+			parent->append_child(new PluginsInspectorItem(true, factory->get_name(), parent));
 		}
 }
 
 void PluginsInspectorModel::fill_inspector_by_plugin(const RefPtr<Plugin>& plugin)
 {
-	auto plugin_item = new PluginsInspectorItem(plugin->get_name().c_str(), root_item);
+	auto plugin_item = new PluginsInspectorItem(false, plugin->get_name().c_str(), root_item);
 
 	root_item->append_child(plugin_item);
 
 	for (auto feature : Registry::get()->get_feature_list(plugin->get_name()))
 		if (feature && GST_IS_ELEMENT_FACTORY (feature->gobj()))
-			plugin_item->append_child(new PluginsInspectorItem(feature->get_name().c_str(), plugin_item));
+			plugin_item->append_child(new PluginsInspectorItem(true, feature->get_name().c_str(), plugin_item));
 }
 
 int PluginsInspectorModel::columnCount(const QModelIndex& parent) const
@@ -107,6 +107,11 @@ QVariant PluginsInspectorModel::data(const QModelIndex& index, int role) const
 
 Qt::ItemFlags PluginsInspectorModel::flags(const QModelIndex &index) const
 {
+	PluginsInspectorItem* item = static_cast<PluginsInspectorItem*>(index.internalPointer());
+
+	if (!item->is_factory())
+		return 0;
+
 	if (!index.isValid())
 		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 

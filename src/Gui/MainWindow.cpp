@@ -8,6 +8,7 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "Workspace/WorkspaceWidget.h"
 #include "ExportToDotDialog.h"
 #include <QLayout>
 #include <QMessageBox>
@@ -17,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	ui->workspaceFrame->layout()->addWidget(new WorkspaceWidget);
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
 

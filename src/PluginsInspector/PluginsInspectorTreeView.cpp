@@ -7,6 +7,7 @@
  */
 
 #include "PluginsInspectorTreeView.h"
+#include "common.h"
 #include <QDrag>
 #include <QByteArray>
 #include <QMimeData>
@@ -39,7 +40,7 @@ void PluginsInspectorTreeView::startDrag(Qt::DropActions supportedActions)
 	data_stream << current_factory_name;
 
 	QMimeData* mime_data = new QMimeData;
-	mime_data->setData("XXXX", itemData); // TODO set const dragdrop format
+	mime_data->setData(DRAG_DROP_FORMAT, itemData);
 
 	QDrag *drag = new QDrag(this);
 	drag->setMimeData(mime_data);

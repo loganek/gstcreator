@@ -98,13 +98,14 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QFrame" name="frame_4">
+         <widget class="QFrame" name="workspaceFrame">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3"/>
          </widget>
         </item>
         <item>
