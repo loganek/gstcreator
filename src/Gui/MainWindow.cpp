@@ -74,6 +74,12 @@ void MainWindow::reload_plugin_inspector()
 
 MainWindow::~MainWindow()
 {
+	try
+	{
+		safe_call<MainController, void, IModelObserver*>(controller.get(),
+				&MainController::unregister_model_observer, static_cast<IModelObserver*>(workspace));
+	}
+	catch (...) { /* ok, we cannot do anything else with this exception */ }
 	delete ui;
 }
 
@@ -81,7 +87,16 @@ void MainWindow::set_controller(std::shared_ptr<MainController> controller)
 {
 	this->controller = controller;
 	safe_call<WorkspaceWidget, void, const Glib::RefPtr<Gst::Bin>&>(workspace, &WorkspaceWidget::set_model, controller->get_current_model());
-	safe_call<MainController, void, IModelObserver*>(controller.get(), &MainController::register_model_observer, static_cast<IModelObserver*>(workspace));
+
+	try
+	{
+		safe_call<MainController, void, IModelObserver*>(controller.get(),
+				&MainController::register_model_observer, static_cast<IModelObserver*>(workspace));
+	}
+	catch (const std::runtime_error& ex)
+	{
+		show_error(std::string("Problems with register observer: ") + ex.what());
+	}
 }
 
 void MainWindow::show_error(const std::string& err)
