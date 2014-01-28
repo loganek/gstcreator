@@ -1,6 +1,7 @@
 set(LOGIC_HEADERS
 	include/Logic/GstController.h
 	include/Logic/MainController.h
+	include/Logic/IModelObserver.h
 )
 
 include_directories(include/Logic)
