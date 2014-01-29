@@ -35,6 +35,7 @@ void WorkspaceWidget::set_model(const Glib::RefPtr<Gst::Bin>& model)
 {
 	filter->set_model(model);
 	current_model = model;
+	draw_current_model();
 }
 
 void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
@@ -59,4 +60,14 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 			b->addPort(element->get_pad_template(tpl.get_name_template()), tpl.get_direction() == Gst::PAD_SRC);
 
 	b->setPos(filter->get_previous_pos());
+}
+
+void WorkspaceWidget::draw_current_model()
+{
+	scene->clear();
+
+	auto iterator = current_model->iterate_elements();
+
+	while (iterator.next())
+		element_added(*iterator);
 }

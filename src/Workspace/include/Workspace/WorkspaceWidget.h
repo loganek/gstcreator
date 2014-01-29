@@ -25,6 +25,8 @@ private:
 	EventFilter* filter;
 	Glib::RefPtr<Gst::Bin> current_model;
 
+	void draw_current_model();
+
 public:
 	explicit WorkspaceWidget(QWidget* parent = 0);
 	virtual ~WorkspaceWidget();
