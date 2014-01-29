@@ -57,4 +57,6 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 	for (auto tpl : element->get_factory()->get_static_pad_templates())
 		if (tpl.get_presence() == Gst::PAD_SOMETIMES || tpl.get_presence() == Gst::PAD_REQUEST)
 			b->addPort(element->get_pad_template(tpl.get_name_template()), tpl.get_direction() == Gst::PAD_SRC);
+
+	b->setPos(filter->get_previous_pos());
 }

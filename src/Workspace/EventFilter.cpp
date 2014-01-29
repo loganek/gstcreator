@@ -90,6 +90,7 @@ bool EventFilter::drop_block(QEvent* e)
 		return true;
 
 	element->set_name(name.toUtf8().constData());
+	previous_pos = ev->scenePos();
 
 	AddCommand cmd(element, model);
 	try
@@ -112,4 +113,9 @@ QString EventFilter::get_new_name(const QString& name) const
 		return new_name;
 	else
 		return QString();
+}
+
+QPointF EventFilter::get_previous_pos() const
+{
+	return previous_pos;
 }

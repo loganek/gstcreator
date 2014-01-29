@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QEvent>
 #include <QMimeData>
+#include <QPointF>
 #include <gstreamermm.h>
 
 class EventFilter : public QObject
@@ -24,11 +25,13 @@ private:
 	static bool check_mime_data(const QMimeData* mime_data);
 	bool drop_block(QEvent* e);
 	QString get_new_name(const QString& name) const;
+	QPointF previous_pos;
 
 public:
 	EventFilter(QObject* parent = 0);
 	bool eventFilter(QObject *o, QEvent *e);
 	void set_model(const Glib::RefPtr<Gst::Bin>& model);
+	QPointF get_previous_pos() const;
 };
 
 
