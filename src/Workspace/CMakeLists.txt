@@ -9,6 +9,7 @@ add_library(Workspace
 	${WORKSPACE_HEADERS}
 )
 
+target_link_libraries(Workspace qnelibrary)
 include_directories(include/Workspace)
 
 qt5_use_modules(Workspace Widgets)
