@@ -25,8 +25,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 #include "qneconnection.h"
 
-#include "qneport.h"
-
 #include <QBrush>
 #include <QPen>
 #include <QGraphicsScene>
@@ -38,6 +36,14 @@ QNEConnection::QNEConnection(QGraphicsItem *parent) : QGraphicsPathItem(parent)
 	setZValue(-1);
 	m_port1 = 0;
 	m_port2 = 0;
+}
+
+QNEConnection::QNEConnection(QNEPort* first, QNEPort* second, QGraphicsItem *parent)
+: QNEConnection(parent)
+{
+	setPort1(first);
+	setPort2(second);
+	updatePath();
 }
 
 QNEConnection::~QNEConnection()
@@ -63,6 +69,7 @@ void QNEConnection::setPort1(QNEPort *p)
 	m_port1 = p;
 
 	m_port1->connections().append(this);
+	setPos1(p->scenePos());
 }
 
 void QNEConnection::setPort2(QNEPort *p)
@@ -70,6 +77,7 @@ void QNEConnection::setPort2(QNEPort *p)
 	m_port2 = p;
 
 	m_port2->connections().append(this);
+	setPos2(p->scenePos());
 }
 
 void QNEConnection::updatePosFromPorts()

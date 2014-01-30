@@ -77,6 +77,18 @@ void GstController::set_watch_method(const RefPtr<Element>& element)
 		notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_removed, pad);
 	});
 
+	auto iterator = element->iterate_pads();
+	while (iterator.next())
+	{
+		iterator->signal_linked().connect([this](const RefPtr<Pad>& proxy_pad){
+			notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_linked, proxy_pad);
+		});
+		iterator->signal_unlinked().connect([this](const RefPtr<Pad>& proxy_pad){
+			notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_unlinked, proxy_pad);
+		});
+	}
+
+
 	if (element->is_bin())
 	{
 		RefPtr<Bin> bin = bin.cast_static(element);

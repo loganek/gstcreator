@@ -7,7 +7,6 @@
  */
 
 #include "WorkspaceWidget.h"
-#include "qnelibrary.h"
 #include <QResizeEvent>
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent)
@@ -61,6 +60,43 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 
 	b->setPos(filter->get_previous_pos());
 }
+
+void WorkspaceWidget::pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad)
+{
+	if (proxy_pad->get_direction() == Gst::PAD_SINK)
+		return;
+
+	QNEPort* src_port = find_port(proxy_pad->get_peer()),
+			*sink_port = find_port(proxy_pad);
+
+	if (!src_port || !sink_port)
+		throw std::runtime_error("cannot draw connection between pads");
+
+	scene->addItem(new QNEConnection(src_port, sink_port));
+}
+
+QNEPort* WorkspaceWidget::find_port(const Glib::RefPtr<Gst::Pad>& pad)
+{
+	QNEBlock* block = find_block(pad->get_parent_element());
+	return (!block) ? nullptr : block->find_port(pad);
+}
+
+QNEBlock* WorkspaceWidget::find_block(const Glib::RefPtr<Gst::Element>& model)
+{
+	for (auto item : scene->items())
+	{
+		if (!item || item->type() != QNEBlock::Type)
+			continue;
+
+		QNEBlock* block = static_cast<QNEBlock*>(item);
+
+		if (block && block->get_model() == model)
+			return block;
+	}
+
+	return nullptr;
+}
+
 
 void WorkspaceWidget::draw_current_model()
 {

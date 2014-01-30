@@ -11,6 +11,7 @@
 
 #include "EventFilter.h"
 #include "Logic/IModelObserver.h"
+#include "qnelibrary.h"
 #include <QWidget>
 #include <QGraphicsView>
 #include <gstreamermm.h>
@@ -26,6 +27,8 @@ private:
 	Glib::RefPtr<Gst::Bin> current_model;
 
 	void draw_current_model();
+	QNEBlock* find_block(const Glib::RefPtr<Gst::Element>& model);
+	QNEPort* find_port(const Glib::RefPtr<Gst::Pad>& pad);
 
 public:
 	explicit WorkspaceWidget(QWidget* parent = 0);
@@ -37,7 +40,7 @@ public:
 	// IModelObserver implementation
 	void pad_added(const Glib::RefPtr<Gst::Pad>& pad){}
 	void pad_removed(const Glib::RefPtr<Gst::Pad>& pad){}
-	void pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad){}
+	void pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad);
 	void pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad){}
 	void element_added(const Glib::RefPtr<Gst::Element>& element);
 	void element_removed(const Glib::RefPtr<Gst::Element>& element){}

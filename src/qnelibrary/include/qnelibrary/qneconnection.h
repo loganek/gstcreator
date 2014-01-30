@@ -26,6 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #ifndef QNECONNECTION_H
 #define QNECONNECTION_H
 
+#include "qneport.h"
 #include <QGraphicsPathItem>
 
 class QNEPort;
@@ -36,6 +37,7 @@ public:
 	enum { Type = QGraphicsItem::UserType + 2 };
 
 	QNEConnection(QGraphicsItem *parent = 0);
+	QNEConnection(QNEPort* first, QNEPort* second, QGraphicsItem *parent = 0);
 	~QNEConnection();
 
 	void setPos1(const QPointF &p);
