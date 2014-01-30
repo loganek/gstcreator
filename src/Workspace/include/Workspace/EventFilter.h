@@ -9,6 +9,7 @@
 #ifndef EVENTFILTER_H_
 #define EVENTFILTER_H_
 
+#include "qnelibrary.h"
 #include <QObject>
 #include <QEvent>
 #include <QMimeData>
@@ -21,14 +22,18 @@ class EventFilter : public QObject
 
 private:
 	Glib::RefPtr<Gst::Element> model;
+	QNEConnection* current_connection;
+	QPointF previous_pos;
 
 	static bool check_mime_data(const QMimeData* mime_data);
 	bool drop_block(QEvent* e);
+	bool mouse_press_handler(QEvent* e);
 	QString get_new_name(const QString& name) const;
-	QPointF previous_pos;
+	QGraphicsScene* get_scene() const;
+	QGraphicsItem* item_at_position(const QPointF &pos) const;
 
 public:
-	EventFilter(QObject* parent = 0);
+	EventFilter(QGraphicsScene* parent);
 	bool eventFilter(QObject *o, QEvent *e);
 	void set_model(const Glib::RefPtr<Gst::Bin>& model);
 	QPointF get_previous_pos() const;

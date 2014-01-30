@@ -16,9 +16,27 @@
 using namespace Gst;
 using Glib::RefPtr;
 
-EventFilter::EventFilter(QObject* parent)
-: QObject(parent)
+EventFilter::EventFilter(QGraphicsScene* parent)
+: QObject(parent),
+  current_connection(nullptr)
 {}
+
+QGraphicsScene* EventFilter::get_scene() const
+{
+	return static_cast<QGraphicsScene*>(parent());
+}
+
+QGraphicsItem* EventFilter::item_at_position(const QPointF &pos) const
+{
+	QList<QGraphicsItem*> items =
+			get_scene()->items(QRectF(pos - QPointF(1,1), QSize(3,3)));
+
+	for (auto item : items)
+		if (item->type() > QGraphicsItem::UserType)
+			return item;
+
+	return nullptr;
+}
 
 void EventFilter::set_model(const RefPtr<Bin>& model)
 {
@@ -30,19 +48,34 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 	switch ((int) e->type())
 	{
 	case QEvent::GraphicsSceneMousePress:
-	{
-		QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent*>(e);
-		switch ((int) me->button())
-		{
-		case Qt::LeftButton:
-			break;
-		case Qt::RightButton:
-			break;
-		}
+		if (mouse_press_handler(e))
+			return true;
 		break;
-	}
 	case QEvent::GraphicsSceneMouseMove:
-		break;
+	{
+		if (current_connection == nullptr)
+			break;
+
+		QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent*>(e);
+
+		if (me == nullptr)
+			break;
+
+		current_connection->setPos2(me->scenePos());
+		current_connection->updatePath();
+		QGraphicsItem *item = item_at_position(me->scenePos());
+		if (item && item != current_connection->port1() && item->type() == QNEPort::Type)
+		{
+			QNEPort *src_port = (current_connection->port1()->isOutput()) ? current_connection->port1() : (QNEPort*) item;
+			QNEPort *sink_port = (!current_connection->port1()->isOutput()) ? current_connection->port1() : (QNEPort*) item;
+
+			current_connection->connectColor(src_port->can_link(sink_port));
+		}
+		else
+			current_connection->connectColor(2);
+
+		return true;
+	}
 	case QEvent::GraphicsSceneDragMove:
 	{
 		QGraphicsSceneDragDropEvent* ev = static_cast<QGraphicsSceneDragDropEvent*>(e);
@@ -56,17 +89,66 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 		return true;
 	}
 	case QEvent::GraphicsSceneMouseRelease:
-		break;
+	{
+		QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent*>(e);
+
+		if (me == nullptr)
+			break;
+
+		if (!current_connection || me->button() != Qt::LeftButton)
+			break;
+
+		delete current_connection;
+		current_connection = nullptr;
+		return true;
+	}
 	case QEvent::GraphicsSceneDrop:
 		return drop_block(e);
-	}
+}
 
-	return QObject::eventFilter(o, e);
+return QObject::eventFilter(o, e);
 }
 
 bool EventFilter::check_mime_data(const QMimeData* mime_data)
 {
 	return mime_data->hasFormat(DRAG_DROP_FORMAT);
+}
+
+bool EventFilter::mouse_press_handler(QEvent* e)
+{
+	QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent*>(e);
+
+	if (me == nullptr)
+		return false;
+
+	switch (me->button())
+	{
+	case Qt::LeftButton:
+	{
+		QNEPort *item = static_cast<QNEPort*>(item_at_position(me->scenePos()));
+
+		if (!item)
+			break;
+
+		if (item->type() == QNEPort::Type)
+		{
+			if (current_connection) delete current_connection;
+			current_connection = new QNEConnection();
+			get_scene()->addItem(current_connection);
+			current_connection->setPort1(item);
+			current_connection->setPos2(me->scenePos());
+			current_connection->updatePath();
+			return true;
+		}
+		break;
+	}
+	case Qt::RightButton:
+		break;
+	default:
+		break;
+	}
+
+	return false;
 }
 
 bool EventFilter::drop_block(QEvent* e)

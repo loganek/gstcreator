@@ -13,8 +13,8 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
 : QWidget(parent)
 {
 	setAcceptDrops(true);
-	filter = new EventFilter();
 	scene = new QGraphicsScene();
+	filter = new EventFilter(scene);
 	scene->installEventFilter(filter);
 	view = new QGraphicsView(scene, this);
 	view->setRenderHint(QPainter::Antialiasing, true);
