@@ -61,6 +61,19 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 	b->setPos(filter->get_previous_pos());
 }
 
+void WorkspaceWidget::pad_added(const Glib::RefPtr<Gst::Pad>& pad)
+{
+	QNEBlock* block = find_block(pad->get_parent_element());
+
+	if (block == nullptr)
+		throw std::runtime_error("cannot draw pad in a block");
+
+	if (pad->get_direction() == Gst::PAD_SINK)
+		block->addInputPort(pad);
+	else
+		block->addOutputPort(pad);
+}
+
 void WorkspaceWidget::pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad)
 {
 	if (proxy_pad->get_direction() == Gst::PAD_SINK)
