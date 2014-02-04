@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <QGraphicsScene>
 #include <QFontMetrics>
 #include <QPainter>
+#include <QStyleOptionGraphicsItem>
 
 #include "qneport.h"
 
@@ -43,163 +44,78 @@ QNEBlock::QNEBlock(const Glib::RefPtr<Gst::Element>& model, QGraphicsItem *paren
 	setBrush(Qt::green);
 	setFlag(QGraphicsItem::ItemIsMovable);
 	setFlag(QGraphicsItem::ItemIsSelectable);
-	horzMargin = 20;
-	vertMargin = 5;
-	width = horzMargin;
-	height = vertMargin;
+	horz_margin = 20;
+	vert_margin = 5;
+	width = horz_margin;
+	height = vert_margin;
 }
 
-QNEPort* QNEBlock::addPort(const Glib::RefPtr<Gst::Object>& model, bool isOutput, int flags, int ptr)
+QNEPort* QNEBlock::add_port(const Glib::RefPtr<Gst::Object>& model, bool isOutput, int flags)
 {
-	QNEPort *port = new QNEPort(model, this);
 	Glib::ustring port_name = model ? model->get_name() : (
-			isOutput ? "ai_src" : "ai_sink");
-	port->setName(port_name.c_str());
-	port->setIsOutput(isOutput);
-	port->setNEBlock(this);
-	port->setPortFlags(flags);
-	port->setPtr(ptr);
+				isOutput ? "ai_src" : "ai_sink");
+	QNEPort *port = new QNEPort(model, this, port_name.c_str());
+	port->set_is_output(isOutput);
+	port->set_port_flags(flags);
 
 	QFontMetrics fm(scene()->font());
 	int w = fm.width(port_name.c_str());
 	int h = fm.height();
-	// port->setPos(0, height + h/2);
-	if (w > width - horzMargin)
-		width = w + horzMargin;
+
+	if (w > width - horz_margin)
+		width = w + horz_margin;
 	height += h;
 
 	QPainterPath p;
 	p.addRoundedRect(-width/2, -height/2, width, height, 5, 5);
 	setPath(p);
 
-	int y = -height / 2 + vertMargin + port->radius();
-	Q_FOREACH(QGraphicsItem *port_, childItems()) {
+	int y = -height / 2 + vert_margin + port->get_radius();
+	for (QGraphicsItem* port_ : childItems())
+	{
 		if (port_->type() != QNEPort::Type)
 			continue;
 
-		QNEPort *port = (QNEPort*) port_;
-		if (port->isOutput())
-			port->setPos(width/2 + port->radius(), y);
+		QNEPort *port = static_cast<QNEPort*>(port_);
+		if (port->is_output())
+			port->setPos(width/2 + port->get_radius(), y);
 		else
-			port->setPos(-width/2 - port->radius(), y);
+			port->setPos(-width/2 - port->get_radius(), y);
 		y += h;
 	}
 
 	return port;
 }
 
-void QNEBlock::addInputPort(const Glib::RefPtr<Gst::Object>& model)
+void QNEBlock::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-	addPort(model, false);
-}
-
-void QNEBlock::addOutputPort(const Glib::RefPtr<Gst::Object>& model)
-{
-	addPort(model, true);
-}
-
-void QNEBlock::save(QDataStream &ds)
-{
-	ds << pos();
-
-	int count(0);
-
-	Q_FOREACH(QGraphicsItem *port_, childItems())
+	if (isSelected())
 	{
-		if (port_->type() != QNEPort::Type)
-			continue;
-
-		count++;
+		painter->setPen(QPen(Qt::darkYellow));
+		painter->setBrush(Qt::yellow);
 	}
-
-	ds << count;
-
-	Q_FOREACH(QGraphicsItem *port_, childItems())
+	else
 	{
-		if (port_->type() != QNEPort::Type)
-			continue;
-
-		QNEPort *port = (QNEPort*) port_;
-		ds << (quint64) port;
-		ds << port->portName();
-		ds << port->isOutput();
-		ds << port->portFlags();
+		painter->setPen(QPen(Qt::darkGreen));
+		painter->setBrush(Qt::green);
 	}
-}
-
-void QNEBlock::load(QDataStream &ds, QMap<quint64, QNEPort*> &portMap)
-{
-	QPointF p;
-	ds >> p;
-	setPos(p);
-	int count;
-	ds >> count;
-	for (int i = 0; i < count; i++)
-	{
-		QString name;
-		bool output;
-		int flags;
-		quint64 ptr;
-
-		ds >> ptr;
-		ds >> name;
-		ds >> output;
-		ds >> flags;
-		// portMap[ptr] = addPort(name, output, flags, ptr);
-	}
-}
-
-#include <QStyleOptionGraphicsItem>
-
-void QNEBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-	Q_UNUSED(option)
-											Q_UNUSED(widget)
-
-											if (isSelected()) {
-												painter->setPen(QPen(Qt::darkYellow));
-												painter->setBrush(Qt::yellow);
-											} else {
-												painter->setPen(QPen(Qt::darkGreen));
-												painter->setBrush(Qt::green);
-											}
 
 	painter->drawPath(path());
 }
 
-QNEBlock* QNEBlock::clone()
-{
-	QNEBlock *b = new QNEBlock(model, 0);
-	this->scene()->addItem(b);
-
-	Q_FOREACH(QGraphicsItem *port_, childItems())
-	{
-		if (port_->type() == QNEPort::Type)
-		{
-			QNEPort *port = (QNEPort*) port_;
-			b->addPort(port->get_object_model(), port->isOutput(), port->portFlags(), port->ptr());
-		}
-	}
-
-	return b;
-}
-
-QVector<QNEPort*> QNEBlock::ports()
+QVector<QNEPort*> QNEBlock::get_ports()
 {
 	QVector<QNEPort*> res;
-	Q_FOREACH(QGraphicsItem *port_, childItems())
+	for (QGraphicsItem *port_ : childItems())
 	{
 		if (port_->type() == QNEPort::Type)
-			res.append((QNEPort*) port_);
+			res.append(static_cast<QNEPort*>(port_));
 	}
 	return res;
 }
 
-QVariant QNEBlock::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant QNEBlock::itemChange(GraphicsItemChange change, const QVariant& value)
 {
-
-	Q_UNUSED(change);
-
 	return value;
 }
 

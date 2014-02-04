@@ -61,13 +61,12 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 		if (me == nullptr)
 			break;
 
-		current_connection->setPos2(me->scenePos());
-		current_connection->updatePath();
+		current_connection->updatePath(me->scenePos());
 		QGraphicsItem *item = item_at_position(me->scenePos());
-		if (item && item != current_connection->port1() && item->type() == QNEPort::Type)
+		if (item && item != current_connection->get_port1() && item->type() == QNEPort::Type)
 		{
-			QNEPort *src_port = (current_connection->port1()->isOutput()) ? current_connection->port1() : (QNEPort*) item;
-			QNEPort *sink_port = (!current_connection->port1()->isOutput()) ? current_connection->port1() : (QNEPort*) item;
+			QNEPort *src_port = (current_connection->get_port1()->is_output()) ? current_connection->get_port1() : (QNEPort*) item;
+			QNEPort *sink_port = (!current_connection->get_port1()->is_output()) ? current_connection->get_port1() : (QNEPort*) item;
 
 			current_connection->connectColor(src_port->can_link(sink_port));
 		}
@@ -135,9 +134,8 @@ bool EventFilter::mouse_press_handler(QEvent* e)
 			if (current_connection) delete current_connection;
 			current_connection = new QNEConnection();
 			get_scene()->addItem(current_connection);
-			current_connection->setPort1(item);
-			current_connection->setPos2(me->scenePos());
-			current_connection->updatePath();
+			current_connection->set_port1(item);
+			current_connection->updatePath(me->scenePos());
 			return true;
 		}
 		break;

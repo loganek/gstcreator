@@ -36,27 +36,23 @@ class QNEBlock : public QGraphicsPathItem
 public:
 	enum { Type = QGraphicsItem::UserType + 3 };
 
-	QNEBlock(const Glib::RefPtr<Gst::Element>& model, QGraphicsItem *parent = 0);
+	QNEBlock(const Glib::RefPtr<Gst::Element>& model, QGraphicsItem* parent = 0);
 
-	QNEPort* addPort(const Glib::RefPtr<Gst::Object>& model, bool isOutput, int flags = 0, int ptr = 0);
-	void addInputPort(const Glib::RefPtr<Gst::Object>& model);
-	void addOutputPort(const Glib::RefPtr<Gst::Object>& model);
-	void save(QDataStream&);
-	void load(QDataStream&, QMap<quint64, QNEPort*> &portMap);
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	QNEBlock* clone();
-	QVector<QNEPort*> ports();
+	QNEPort* add_port(const Glib::RefPtr<Gst::Object>& model, bool isOutput, int flags = 0);
+	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+
+	QVector<QNEPort*> get_ports();
 
 	int type() const { return Type; }
 	Glib::RefPtr<Gst::Element> get_model() { return model; }
 	QNEPort* find_port(const Glib::RefPtr<Gst::Object>& model);
 
 protected:
-	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+	QVariant itemChange(GraphicsItemChange change, const QVariant& value);
 
 private:
-	int horzMargin;
-	int vertMargin;
+	int horz_margin;
+	int vert_margin;
 	int width;
 	int height;
 	Glib::RefPtr<Gst::Element> model;

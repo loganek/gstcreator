@@ -36,29 +36,22 @@ class QNEConnection : public QGraphicsPathItem
 public:
 	enum { Type = QGraphicsItem::UserType + 2 };
 
-	QNEConnection(QGraphicsItem *parent = 0);
-	QNEConnection(QNEPort* first, QNEPort* second, QGraphicsItem *parent = 0);
+	QNEConnection(QGraphicsItem* parent = 0);
+	QNEConnection(QNEPort* first, QNEPort* second, QGraphicsItem* parent = 0);
 	~QNEConnection();
 
-	void setPos1(const QPointF &p);
-	void setPos2(const QPointF &p);
-	void setPort1(QNEPort *p);
-	void setPort2(QNEPort *p);
-	void updatePosFromPorts();
-	void updatePath();
-	QNEPort* port1() const;
-	QNEPort* port2() const;
+	void set_port1(QNEPort* p);
+	void set_port2(QNEPort* p);
+	void updatePath(QPointF pos2 = QPointF());
+	QNEPort* get_port1() const;
+	QNEPort* get_port2() const;
 	void connectColor(int status);
-	void save(QDataStream&);
-	void load(QDataStream&, const QMap<quint64, QNEPort*> &portMap);
 
 	int type() const { return Type; }
 
 private:
-	QPointF pos1;
-	QPointF pos2;
-	QNEPort *m_port1;
-	QNEPort *m_port2;
+	QNEPort* port1;
+	QNEPort* port2;
 };
 
 #endif // QNECONNECTION_H

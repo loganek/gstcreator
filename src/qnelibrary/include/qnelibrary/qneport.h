@@ -38,28 +38,22 @@ public:
 	enum { Type = QGraphicsItem::UserType + 1 };
 	enum { NamePort = 1, TypePort = 2 };
 
-	QNEPort(const Glib::RefPtr<Gst::Object>& model, QGraphicsItem *parent = 0);
+	QNEPort(const Glib::RefPtr<Gst::Object>& model, QNEBlock *parent, const QString& name);
 	~QNEPort();
 
-	void setNEBlock(QNEBlock*);
-	void setName(const QString &n);
-	void setIsOutput(bool o);
-	int radius();
-	bool isOutput();
-	QVector<QNEConnection*>& connections();
-	void setPortFlags(int);
+	void set_is_output(bool o);
+	int get_radius();
+	bool is_output();
+	QVector<QNEConnection*>& get_connections();
+	void set_port_flags(int);
 
-	const QString& portName() const { return name; }
-	int portFlags() const { return m_portFlags; }
+	const QString& get_port_name() const { return name; }
 
 	int type() const { return Type; }
 
-	QNEBlock* block() const;
+	QNEBlock* get_block() const;
 
-	quint64 ptr();
-	void setPtr(quint64);
-
-	bool isConnected(QNEPort*);
+	bool is_connected(QNEPort*);
 
 	Glib::RefPtr<Gst::Object> get_object_model() { return model; }
 	bool is_template_model() { return GST_IS_PAD_TEMPLATE(model->gobj()); }
@@ -70,15 +64,14 @@ protected:
 
 private:
 
-	QNEBlock *m_block;
+	QNEBlock* block;
 	QString name;
 	bool isOutput_;
 	QGraphicsTextItem *label;
-	int radius_;
+	int radius;
 	int margin;
 	QVector<QNEConnection*> m_connections;
 	int m_portFlags;
-	quint64 m_ptr;
 	Glib::RefPtr<Gst::Object> model;
 };
 

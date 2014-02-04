@@ -44,19 +44,19 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 
 	QNEBlock *b = new QNEBlock(element, 0);
 	scene->addItem(b);
-	b->addPort(element, 0, QNEPort::NamePort);
+	b->add_port(element, 0, QNEPort::NamePort);
 
 	auto sink_iterator = element->iterate_sink_pads();
 	while (sink_iterator.next())
-		b->addInputPort(*sink_iterator);
+		b->add_port(*sink_iterator, false);
 
 	auto src_iterator = element->iterate_src_pads();
 	while (src_iterator.next())
-		b->addOutputPort(*src_iterator);
+		b->add_port(*src_iterator, true);
 
 	for (auto tpl : element->get_factory()->get_static_pad_templates())
 		if (tpl.get_presence() == Gst::PAD_SOMETIMES || tpl.get_presence() == Gst::PAD_REQUEST)
-			b->addPort(element->get_pad_template(tpl.get_name_template()), tpl.get_direction() == Gst::PAD_SRC);
+			b->add_port(element->get_pad_template(tpl.get_name_template()), tpl.get_direction() == Gst::PAD_SRC);
 
 	b->setPos(filter->get_previous_pos());
 }
@@ -68,10 +68,7 @@ void WorkspaceWidget::pad_added(const Glib::RefPtr<Gst::Pad>& pad)
 	if (block == nullptr)
 		throw std::runtime_error("cannot draw pad in a block");
 
-	if (pad->get_direction() == Gst::PAD_SINK)
-		block->addInputPort(pad);
-	else
-		block->addOutputPort(pad);
+	block->add_port(pad, pad->get_direction() == Gst::PAD_SRC);
 }
 
 void WorkspaceWidget::pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad)

@@ -29,69 +29,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <QPen>
 #include <QGraphicsScene>
 
-QNEConnection::QNEConnection(QGraphicsItem *parent) : QGraphicsPathItem(parent)
+QNEConnection::QNEConnection(QGraphicsItem *parent)
+: QGraphicsPathItem(parent),
+  port1(nullptr),
+  port2(nullptr)
 {
 	setPen(QPen(Qt::black, 2));
 	setBrush(Qt::NoBrush);
 	setZValue(-1);
-	m_port1 = 0;
-	m_port2 = 0;
 }
 
-QNEConnection::QNEConnection(QNEPort* first, QNEPort* second, QGraphicsItem *parent)
+QNEConnection::QNEConnection(QNEPort* first, QNEPort* second, QGraphicsItem* parent)
 : QNEConnection(parent)
 {
-	setPort1(first);
-	setPort2(second);
+	set_port1(first);
+	set_port2(second);
 	updatePath();
 }
 
 QNEConnection::~QNEConnection()
 {
-	if (m_port1)
-		m_port1->connections().remove(m_port1->connections().indexOf(this));
-	if (m_port2)
-		m_port2->connections().remove(m_port2->connections().indexOf(this));
+	if (port1)
+		port1->get_connections().remove(port1->get_connections().indexOf(this));
+	if (port2)
+		port2->get_connections().remove(port2->get_connections().indexOf(this));
 }
 
-void QNEConnection::setPos1(const QPointF &p)
+void QNEConnection::set_port1(QNEPort* p)
 {
-	pos1 = p;
+	port1 = p;
+	port1->get_connections().append(this);
 }
 
-void QNEConnection::setPos2(const QPointF &p)
+void QNEConnection::set_port2(QNEPort* p)
 {
-	pos2 = p;
+	port2 = p;
+	port2->get_connections().append(this);
 }
 
-void QNEConnection::setPort1(QNEPort *p)
-{
-	m_port1 = p;
-
-	m_port1->connections().append(this);
-	setPos1(p->scenePos());
-}
-
-void QNEConnection::setPort2(QNEPort *p)
-{
-	m_port2 = p;
-
-	m_port2->connections().append(this);
-	setPos2(p->scenePos());
-}
-
-void QNEConnection::updatePosFromPorts()
-{
-	pos1 = m_port1->scenePos();
-	pos2 = m_port2->scenePos();
-}
-
-void QNEConnection::updatePath()
+void QNEConnection::updatePath(QPointF pos2)
 {
 	QPainterPath p;
-
-	//QPointF pos1(m_port1->scenePos());
-	//QPointF pos2(m_port2->scenePos());
+	QPointF pos1 = port1->scenePos();
+	pos2 = (port2 != nullptr) ? this->port2->scenePos(): pos2;
 
 	p.moveTo(pos1);
 
@@ -106,33 +86,14 @@ void QNEConnection::updatePath()
 	setPath(p);
 }
 
-QNEPort* QNEConnection::port1() const
+QNEPort* QNEConnection::get_port1() const
 {
-	return m_port1;
+	return port1;
 }
 
-QNEPort* QNEConnection::port2() const
+QNEPort* QNEConnection::get_port2() const
 {
-	return m_port2;
-}
-
-void QNEConnection::save(QDataStream &ds)
-{
-	ds << (quint64) m_port1;
-	ds << (quint64) m_port2;
-}
-
-void QNEConnection::load(QDataStream &ds, const QMap<quint64, QNEPort*> &portMap)
-{
-	quint64 ptr1;
-	quint64 ptr2;
-	ds >> ptr1;
-	ds >> ptr2;
-
-	setPort1(portMap[ptr1]);
-	setPort2(portMap[ptr2]);
-	updatePosFromPorts();
-	updatePath();
+	return port2;
 }
 
 void QNEConnection::connectColor(int status)
