@@ -45,7 +45,7 @@ public:
 	void updatePath(QPointF pos2 = QPointF());
 	QNEPort* get_port1() const;
 	QNEPort* get_port2() const;
-	void connectColor(int status);
+	void connection_color(int status);
 
 	int type() const { return Type; }
 

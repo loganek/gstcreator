@@ -8,7 +8,7 @@
 
 #include "EventFilter.h"
 #include "common.h"
-#include "Commands/AddCommand.h"
+#include "Commands.h"
 #include <QDataStream>
 #include <QGraphicsSceneEvent>
 #include "Gui/MainWindow.h"
@@ -68,10 +68,10 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 			QNEPort *src_port = (current_connection->get_port1()->is_output()) ? current_connection->get_port1() : (QNEPort*) item;
 			QNEPort *sink_port = (!current_connection->get_port1()->is_output()) ? current_connection->get_port1() : (QNEPort*) item;
 
-			current_connection->connectColor(src_port->can_link(sink_port));
+			current_connection->connection_color(src_port->can_link(sink_port));
 		}
 		else
-			current_connection->connectColor(2);
+			current_connection->connection_color(2);
 
 		return true;
 	}
@@ -91,11 +91,24 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 	{
 		QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent*>(e);
 
-		if (me == nullptr)
+		if (me == nullptr || !current_connection || me->button() != Qt::LeftButton)
 			break;
 
-		if (!current_connection || me->button() != Qt::LeftButton)
-			break;
+		QGraphicsItem *item = item_at_position(me->scenePos());
+
+		if (item != nullptr)
+		{
+			QNEPort* src_port = (current_connection->get_port1()->is_output()) ?
+					current_connection->get_port1() : (QNEPort*) item;
+			QNEPort* sink_port = (!current_connection->get_port1()->is_output()) ?
+				current_connection->get_port1() : (QNEPort*) item;
+
+			if (src_port->can_link(sink_port))
+			{
+				LinkCommand cmd(sink_port->get_object_model(), src_port->get_object_model());
+				cmd.run_command();
+			}
+		}
 
 		delete current_connection;
 		current_connection = nullptr;

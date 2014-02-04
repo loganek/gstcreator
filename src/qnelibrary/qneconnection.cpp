@@ -96,7 +96,7 @@ QNEPort* QNEConnection::get_port2() const
 	return port2;
 }
 
-void QNEConnection::connectColor(int status)
+void QNEConnection::connection_color(int status)
 {
 	Qt::GlobalColor color;
 
