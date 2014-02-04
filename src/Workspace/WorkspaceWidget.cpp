@@ -7,6 +7,7 @@
  */
 
 #include "WorkspaceWidget.h"
+#include "Utils/GstUtils.h"
 #include <QResizeEvent>
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent)
@@ -45,6 +46,11 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 	QNEBlock *b = new QNEBlock(element, 0);
 	scene->addItem(b);
 	b->add_port(element, 0, QNEPort::NamePort);
+
+	if (!GstUtils::is_src_element(element))
+		b->add_port(Glib::RefPtr<Gst::Object>(), true);
+	if (!GstUtils::is_sink_element(element))
+		b->add_port(Glib::RefPtr<Gst::Object>(), false);
 
 	auto sink_iterator = element->iterate_sink_pads();
 	while (sink_iterator.next())

@@ -67,3 +67,24 @@ vector<string> GstUtils::get_path(const RefPtr<Object>& obj,
 
 	return path;
 }
+
+bool GstUtils::is_specified_dir_element(const RefPtr<Element>& element, PadDirection dir)
+{
+	auto tpls = element->get_factory()->get_static_pad_templates();
+
+	for (auto tpl : tpls)
+	{
+		if (tpl.get_direction() != dir)
+			return false;
+	}
+
+	return true;
+}
+bool GstUtils::is_sink_element(const RefPtr<Element>& element)
+{
+	return is_specified_dir_element(element, PAD_SINK);
+}
+bool GstUtils::is_src_element(const RefPtr<Element>& element)
+{
+	return is_specified_dir_element(element, PAD_SRC);
+}

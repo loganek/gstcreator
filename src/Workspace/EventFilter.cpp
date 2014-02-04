@@ -96,7 +96,7 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 
 		QGraphicsItem *item = item_at_position(me->scenePos());
 
-		if (item != nullptr)
+		if (item && item->type() == QNEPort::Type)
 		{
 			QNEPort* src_port = (current_connection->get_port1()->is_output()) ?
 					current_connection->get_port1() : (QNEPort*) item;

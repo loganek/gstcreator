@@ -134,8 +134,18 @@ bool QNEPort::can_link(QNEPort* sink_port) const
 {
 	auto sink_model = sink_port->get_object_model();
 
+	if (!sink_model || !model)
+		return false;
+
 	if (sink_model->is_pad() && model->is_pad())
-		return Glib::RefPtr<Gst::Pad>::cast_static(model)->can_link(Glib::RefPtr<Gst::Pad>::cast_static(sink_model));
+	{
+		auto src = Glib::RefPtr<Gst::Pad>::cast_static(model),
+				sink = Glib::RefPtr<Gst::Pad>::cast_static(sink_model);
+
+		return (src->get_direction() == sink->get_direction()) ? false :
+				src->can_link(sink);
+	}
+
 
 	return false;
 }
