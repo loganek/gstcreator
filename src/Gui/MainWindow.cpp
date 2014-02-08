@@ -63,6 +63,24 @@ MainWindow::MainWindow(QWidget *parent)
 			show_error(ex.what());
 		}
 	});
+
+	up_model_button = new QPushButton("UP");
+	up_model_button->setEnabled(false);
+	ui->statusbar->addWidget(up_model_button);
+	connect(up_model_button, &QPushButton::pressed, [this](){
+		if (controller->get_current_model()->get_parent() && controller->get_current_model()->get_parent()->is_bin())
+		{
+			try
+			{
+				controller->update_current_model(Glib::RefPtr<Gst::Bin>::cast_static(controller->get_current_model()->get_parent()));
+			}
+			catch (const std::runtime_error& ex)
+			{
+				show_error(ex.what());
+			}
+		}
+	});
+
 	reload_plugin_inspector();
 }
 
@@ -114,6 +132,7 @@ void MainWindow::current_model_changed(const std::string& model_path)
 {
 	model_lineedit->setText(model_path.c_str());
 	safe_call<WorkspaceWidget, void, const Glib::RefPtr<Gst::Bin>&>(workspace, &WorkspaceWidget::set_model, controller->get_current_model());
+	up_model_button->setEnabled(!model_path.empty());
 }
 
 void MainWindow::on_actionExport_Bin_To_Dot_File_triggered(bool)

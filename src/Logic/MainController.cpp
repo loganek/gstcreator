@@ -55,7 +55,7 @@ void MainController::update_current_model(const std::string& model_path)
 void MainController::update_current_model(const Glib::RefPtr<Gst::Bin>& model)
 {
 	// todo too much copy&paste code
-	if (!GstUtils::is_ancestor(model, gst_controller.get_master_model()))
+	if (!GstUtils::is_ancestor(model, gst_controller.get_master_model()) && model != gst_controller.get_master_model())
 		throw std::runtime_error("Element is not a child of a master model");
 
 	std::vector<std::string> vec_path =

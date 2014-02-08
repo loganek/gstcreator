@@ -34,6 +34,7 @@ private:
 	PluginsInspectorTreeView plugins_tree_view;
 	PluginsInspectorFilter filter;
 	QLineEdit* model_lineedit;
+	QPushButton* up_model_button;
 	WorkspaceWidget* workspace;
 
 	std::shared_ptr<MainController> controller;
