@@ -55,9 +55,9 @@ void WorkspaceWidget::element_added(const Glib::RefPtr<Gst::Element>& element)
 	b->add_port(element, 0, QNEPort::NamePort);
 
 	if (!GstUtils::is_src_element(element))
-		b->add_port(Glib::RefPtr<Gst::Object>(), true);
-	if (!GstUtils::is_sink_element(element))
 		b->add_port(Glib::RefPtr<Gst::Object>(), false);
+	if (!GstUtils::is_sink_element(element))
+		b->add_port(Glib::RefPtr<Gst::Object>(), true);
 
 	auto sink_iterator = element->iterate_sink_pads();
 	while (sink_iterator.next())
