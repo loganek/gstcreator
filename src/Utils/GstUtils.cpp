@@ -88,21 +88,3 @@ bool GstUtils::is_src_element(const RefPtr<Element>& element)
 {
 	return is_specified_dir_element(element, PAD_SRC);
 }
-
-bool GstUtils::is_ancestor(const Glib::RefPtr<Gst::Element>& child, const Glib::RefPtr<Gst::Bin>& ancestor)
-{
-	if (child == ancestor)
-		return false;
-
-	Glib::RefPtr<Gst::Object> tmp = child;
-
-	while (tmp)
-	{
-		if (tmp == ancestor)
-			return true;
-
-		tmp = tmp->get_parent();
-	}
-
-	return false;
-}
