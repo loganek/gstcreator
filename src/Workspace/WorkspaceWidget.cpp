@@ -8,14 +8,16 @@
 
 #include "WorkspaceWidget.h"
 #include "Utils/GstUtils.h"
+#include "Gui/MainWindow.h"
 #include <QResizeEvent>
 
-WorkspaceWidget::WorkspaceWidget(QWidget* parent)
-: QWidget(parent)
+WorkspaceWidget::WorkspaceWidget(MainWindow* parent)
+: QWidget(parent),
+  parent_window(parent)
 {
 	setAcceptDrops(true);
 	scene = new QGraphicsScene();
-	filter = new EventFilter(scene);
+	filter = new EventFilter(scene, this);
 	scene->installEventFilter(filter);
 	view = new QGraphicsView(scene, this);
 	view->setRenderHint(QPainter::Antialiasing, true);
@@ -24,6 +26,11 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
 
 WorkspaceWidget::~WorkspaceWidget()
 {
+}
+
+std::shared_ptr<MainController> WorkspaceWidget::get_controller() const
+{
+	return parent_window->get_controller();
 }
 
 void WorkspaceWidget::resizeEvent(QResizeEvent * event)

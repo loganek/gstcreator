@@ -9,6 +9,7 @@
 #include "EventFilter.h"
 #include "common.h"
 #include "Commands.h"
+#include "WorkspaceWidget.h"
 #include <QDataStream>
 #include <QGraphicsSceneEvent>
 #include "Gui/MainWindow.h"
@@ -16,9 +17,10 @@
 using namespace Gst;
 using Glib::RefPtr;
 
-EventFilter::EventFilter(QGraphicsScene* parent)
+EventFilter::EventFilter(QGraphicsScene* parent, WorkspaceWidget* workspace)
 : QObject(parent),
-  current_connection(nullptr)
+  current_connection(nullptr),
+  workspace(workspace)
 {}
 
 QGraphicsScene* EventFilter::get_scene() const
@@ -112,6 +114,23 @@ bool EventFilter::eventFilter(QObject* o, QEvent* e)
 
 		delete current_connection;
 		current_connection = nullptr;
+		return true;
+	}
+	case QEvent::GraphicsSceneMouseDoubleClick:
+	{
+		QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent*>(e);
+
+		if (me == nullptr || me->button() != Qt::LeftButton)
+			break;
+
+		QGraphicsItem* item = item_at_position(me->scenePos());
+
+		if (item && item->type() == QNEBlock::Type)
+		{
+			Glib::RefPtr<Gst::Element> e = static_cast<QNEBlock*>(item)->get_model();
+			if (e->is_bin())
+				workspace->get_controller()->update_current_model(Glib::RefPtr<Gst::Bin>::cast_static(e));
+		}
 		return true;
 	}
 	case QEvent::GraphicsSceneDrop:

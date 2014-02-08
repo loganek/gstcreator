@@ -11,10 +11,13 @@
 
 #include "EventFilter.h"
 #include "Logic/IModelObserver.h"
+#include "Logic/MainController.h"
 #include "qnelibrary.h"
 #include <QWidget>
 #include <QGraphicsView>
 #include <gstreamermm.h>
+
+class MainWindow;
 
 class WorkspaceWidget : public QWidget, public IModelObserver
 {
@@ -25,15 +28,17 @@ private:
 	QGraphicsScene* scene;
 	EventFilter* filter;
 	Glib::RefPtr<Gst::Bin> current_model;
+	MainWindow* parent_window;
 
 	void draw_current_model();
 	QNEBlock* find_block(const Glib::RefPtr<Gst::Element>& model);
 	QNEPort* find_port(const Glib::RefPtr<Gst::Pad>& pad);
 
 public:
-	explicit WorkspaceWidget(QWidget* parent = 0);
+	explicit WorkspaceWidget(MainWindow* parent);
 	virtual ~WorkspaceWidget();
 	void set_model(const Glib::RefPtr<Gst::Bin>& model);
+	std::shared_ptr<MainController> get_controller() const;
 
 	void resizeEvent(QResizeEvent * event);
 

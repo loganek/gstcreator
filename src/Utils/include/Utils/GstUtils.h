@@ -24,7 +24,7 @@ public:
 			const Glib::RefPtr<Gst::Element>& model);
 	static bool is_sink_element(const Glib::RefPtr<Gst::Element>& element);
 	static bool is_src_element(const Glib::RefPtr<Gst::Element>& element);
-
+	static bool is_ancestor(const Glib::RefPtr<Gst::Element>& child, const Glib::RefPtr<Gst::Bin>& ancestor);
 
 };
 

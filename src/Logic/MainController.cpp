@@ -52,6 +52,34 @@ void MainController::update_current_model(const std::string& model_path)
 	}
 }
 
+void MainController::update_current_model(const Glib::RefPtr<Gst::Bin>& model)
+{
+	// todo too much copy&paste code
+	if (!GstUtils::is_ancestor(model, gst_controller.get_master_model()))
+		throw std::runtime_error("Element is not a child of a master model");
+
+	std::vector<std::string> vec_path =
+			GstUtils::get_path(model, gst_controller.get_master_model());
+	vec_path.erase(vec_path.begin());
+	std::string model_path = StringUtils::join(vec_path, ":");
+
+	try
+	{
+		gst_controller.update_current_model(Glib::RefPtr<Gst::Bin>::cast_static(model));
+		safe_call<IGui, void, const std::string&>(gui, &IGui::current_model_changed, model_path);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		std::vector<std::string> vec_path =
+				GstUtils::get_path(gst_controller.get_current_model(), gst_controller.get_master_model());
+		vec_path.erase(vec_path.begin());
+		std::string prev_path = StringUtils::join(vec_path, ":");
+		safe_call<IGui, void, const std::string&>(gui, &IGui::current_model_changed, prev_path);
+		throw ex;
+	}
+
+}
+
 void MainController::call_command(const std::string& cmd_text)
 {
 	ObjectExpression* obj_exp = parser.parse(cmd_text);

@@ -26,6 +26,7 @@ public:
 
 	void set_controller(std::shared_ptr<MainController> controller);
 	void current_model_changed(const std::string& model_path);
+	std::shared_ptr<MainController> get_controller() const;
 
 	static void show_error(const std::string& err);
 private:

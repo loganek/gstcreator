@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	workspace = new WorkspaceWidget();
+	workspace = new WorkspaceWidget(this);
 	ui->workspaceFrame->layout()->addWidget(workspace);
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
@@ -81,6 +81,11 @@ MainWindow::~MainWindow()
 	}
 	catch (...) { /* ok, we cannot do anything else with this exception */ }
 	delete ui;
+}
+
+std::shared_ptr<MainController> MainWindow::get_controller() const
+{
+	return this->controller;
 }
 
 void MainWindow::set_controller(std::shared_ptr<MainController> controller)

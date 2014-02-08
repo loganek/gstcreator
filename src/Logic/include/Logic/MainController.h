@@ -26,6 +26,7 @@ public:
 	virtual ~MainController() {}
 
 	void update_current_model(const std::string& model_path);
+	void update_current_model(const Glib::RefPtr<Gst::Bin>& model);
 
 	void call_command(const std::string& cmd_text);
 	void set_gui(IGui* gui);
