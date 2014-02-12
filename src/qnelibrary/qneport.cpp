@@ -34,7 +34,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include "qneblock.h"
 #include "Utils/GstUtils.h"
 
-QNEPort::QNEPort(const Glib::RefPtr<Gst::Object>& model, QNEBlock* parent, const QString& name)
+using Glib::RefPtr;
+using namespace Gst;
+
+QNEPort::QNEPort(const RefPtr<Object>& model, QNEBlock* parent, const QString& name)
 : QGraphicsPathItem(parent),
   block(parent),
   model(model)
@@ -134,13 +137,22 @@ bool QNEPort::can_link(QNEPort* sink_port) const
 {
 	auto sink_model = sink_port->get_object_model();
 
+	if (!model)
+	{
+		auto parent_element = block->get_model();
+
+		if (sink_model && sink_model->is_pad())
+			return !!parent_element->create_compatible_pad(RefPtr<Pad>::cast_static(sink_model), RefPtr<Caps>());
+		else if (sink_model && sink_model->is_pad_template())
+			return !!parent_element->get_compatible_pad_template(RefPtr<PadTemplate>::cast_static(sink_model));
+	}
 	if (!sink_model || !model)
 		return false;
 
 	if (sink_model->is_pad() && model->is_pad())
 	{
-		auto src = Glib::RefPtr<Gst::Pad>::cast_static(model),
-				sink = Glib::RefPtr<Gst::Pad>::cast_static(sink_model);
+		auto src = RefPtr<Pad>::cast_static(model),
+				sink = RefPtr<Pad>::cast_static(sink_model);
 
 		return (src->get_direction() == sink->get_direction()) ? false :
 				src->can_link(sink);
