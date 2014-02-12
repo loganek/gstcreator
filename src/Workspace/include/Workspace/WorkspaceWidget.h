@@ -46,7 +46,7 @@ public:
 	void pad_added(const Glib::RefPtr<Gst::Pad>& pad);
 	void pad_removed(const Glib::RefPtr<Gst::Pad>& pad){}
 	void pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad);
-	void pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad){}
+	void pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad);
 	void element_added(const Glib::RefPtr<Gst::Element>& element);
 	void element_removed(const Glib::RefPtr<Gst::Element>& element){}
 };

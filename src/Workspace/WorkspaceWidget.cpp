@@ -130,3 +130,26 @@ void WorkspaceWidget::draw_current_model()
 	while (iterator.next())
 		element_added(*iterator);
 }
+
+void WorkspaceWidget::pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad)
+{
+	QNEPort* port = find_port(proxy_pad);
+
+	if (!port)
+		return;
+
+	for (auto item : scene->items())
+	{
+		if (!item || item->type() != QNEConnection::Type)
+			continue;
+
+		QNEConnection* con = static_cast<QNEConnection*>(item);
+
+		if ((con->get_port2() && con->get_port2()->get_object_model() == port->get_object_model()) ||
+				(con->get_port1() && con->get_port1()->get_object_model() == port->get_object_model()))
+		{
+			delete item;
+			break;
+		}
+	}
+}

@@ -73,6 +73,8 @@ shared_ptr<Command> CommandFactory::process_method()
 		return process_remove_element();
 	else if (method->get_name() == "remove_pad")
 		return process_remove_pad();
+	else if (method->get_name() == "unlink")
+		return process_unlink();
 
 	throw runtime_error("invalid method");
 }
@@ -194,4 +196,15 @@ shared_ptr<RemoveCommand> CommandFactory::process_remove_pad()
 		throw runtime_error("invalid object type");
 
 	return shared_ptr<RemoveCommand>(new RemoveCommand(RefPtr<Pad>::cast_static(pad_obj), RefPtr<Element>::cast_static(gst_object)));
+}
+
+shared_ptr<UnlinkCommand> CommandFactory::process_unlink()
+{
+	assert_argument_count({0}, method->get_args().size());
+
+	// TODO unlinking elements ???
+	if (!gst_object->is_pad())
+		throw runtime_error("invalid object type");
+
+	return shared_ptr<UnlinkCommand>(new UnlinkCommand(RefPtr<Pad>::cast_static(gst_object)));
 }

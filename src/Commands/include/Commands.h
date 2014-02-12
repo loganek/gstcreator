@@ -14,6 +14,7 @@
 #include "Commands/StateCommand.h"
 #include "Commands/LinkCommand.h"
 #include "Commands/RemoveCommand.h"
+#include "Commands/UnlinkCommand.h"
 #include "Commands/CommandFactory.h"
 
 #endif /* COMMANDS_H_ */

@@ -16,6 +16,7 @@ enum class CommandType
 	ADD,
 	REMOVE,
 	LINK,
+	UNLINK,
 	STATE
 };
 
