@@ -21,6 +21,12 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 	workspace = new WorkspaceWidget(this);
 	ui->workspaceFrame->layout()->addWidget(workspace);
+
+	connect(workspace, &WorkspaceWidget::selected_item_changed, [this](const Glib::RefPtr<Gst::Object>& o){
+		if (o)
+			qDebug() << o->get_name().c_str();
+	});
+
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
 

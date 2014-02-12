@@ -156,7 +156,7 @@ bool EventFilter::mouse_press_handler(QEvent* e)
 	{
 	case Qt::LeftButton:
 	{
-		QNEPort *item = static_cast<QNEPort*>(item_at_position(me->scenePos()));
+		QGraphicsItem *item = item_at_position(me->scenePos());
 
 		if (!item)
 			break;
@@ -166,9 +166,16 @@ bool EventFilter::mouse_press_handler(QEvent* e)
 			if (current_connection) delete current_connection;
 			current_connection = new QNEConnection();
 			get_scene()->addItem(current_connection);
-			current_connection->set_port1(item);
+			auto port_item = static_cast<QNEPort*>(item);
+			current_connection->set_port1(port_item);
 			current_connection->updatePath(me->scenePos());
+			workspace->change_selected_item(port_item->get_object_model());
 			return true;
+		}
+		else if (item->type() == QNEBlock::Type)
+		{
+			auto block_item = static_cast<QNEBlock*>(item);
+			workspace->change_selected_item(block_item->get_model());
 		}
 		break;
 	}

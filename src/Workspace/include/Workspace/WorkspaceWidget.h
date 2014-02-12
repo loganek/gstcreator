@@ -40,6 +40,8 @@ public:
 	void set_model(const Glib::RefPtr<Gst::Bin>& model);
 	std::shared_ptr<MainController> get_controller() const;
 
+	void change_selected_item(const Glib::RefPtr<Gst::Object>& object);
+
 	void resizeEvent(QResizeEvent * event);
 
 	// IModelObserver implementation
@@ -49,6 +51,9 @@ public:
 	void pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad);
 	void element_added(const Glib::RefPtr<Gst::Element>& element);
 	void element_removed(const Glib::RefPtr<Gst::Element>& element){}
+
+Q_SIGNALS:
+	void selected_item_changed(const Glib::RefPtr<Gst::Object>& object);
 };
 
 #endif /* WORKSPACEWIDGET_H_ */

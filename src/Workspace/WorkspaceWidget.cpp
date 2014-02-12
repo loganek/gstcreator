@@ -153,3 +153,8 @@ void WorkspaceWidget::pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad)
 		}
 	}
 }
+
+void WorkspaceWidget::change_selected_item(const Glib::RefPtr<Gst::Object>& object)
+{
+	Q_EMIT selected_item_changed(object);
+}
