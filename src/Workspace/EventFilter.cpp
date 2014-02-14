@@ -156,7 +156,7 @@ bool EventFilter::mouse_press_handler(QEvent* e)
 	{
 	case Qt::LeftButton:
 	{
-		workspace->change_selected_item(RefPtr<Object>());
+		workspace->change_selected_item(workspace->get_controller()->get_current_model());
 		QGraphicsItem *item = item_at_position(me->scenePos());
 
 		if (!item)

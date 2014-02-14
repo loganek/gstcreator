@@ -10,6 +10,7 @@
 #include "ui_MainWindow.h"
 #include "Workspace/WorkspaceWidget.h"
 #include "Commands/RemoveCommand.h"
+#include "Commands/StateCommand.h"
 #include "ExportToDotDialog.h"
 #include "common.h"
 #include <QLayout>
@@ -36,6 +37,15 @@ MainWindow::MainWindow(QWidget *parent)
 			selected_item = o;
 		}
 	});
+
+	QRadioButton* state_buttons[] = {ui->voidPendingRadioButton, ui->nullStateRadioButton,
+			ui->readyRadioButton, ui->pausedRadioButton, ui->playingRadioButton};
+
+	for (int i = 0; i < 5; i++)
+		connect(state_buttons[i], &QPushButton::toggled, [this, state_buttons, i](bool){
+			if (state_buttons[i]->isChecked() && selected_item && selected_item->is_element())
+				StateCommand((StateType)i, Glib::RefPtr<Gst::Element>::cast_static(selected_item)).run_command();
+		});
 
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);

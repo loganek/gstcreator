@@ -11,6 +11,8 @@ using namespace Gst;
 using Glib::RefPtr;
 using namespace std;
 
+// TODO Refactor this file!
+
 RefPtr<Object> GstUtils::find_element(vector<string> path,
 		const RefPtr<Element>& model)
 {
@@ -170,7 +172,8 @@ std::map<std::string, ObjectNodeInfo> GstUtils::get_object_info(const Glib::RefP
 		else
 			info_map.insert({"type", std::string("ELEMENT")});
 		RefPtr<Element> obj_element = obj_element.cast_static(object);
-		info_map.insert({"factory", std::string(obj_element->get_factory()->get_name().c_str())});
+		if (obj_element->get_factory())
+			info_map.insert({"factory", std::string(obj_element->get_factory()->get_name().c_str())});
 	}
 	else if (object->is_pad_template())
 	{

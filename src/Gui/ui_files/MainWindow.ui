@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>894</width>
-    <height>600</height>
+    <width>841</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -148,6 +148,50 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>State</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="voidPendingRadioButton">
+             <property name="text">
+              <string>VOID PENDING</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QRadioButton" name="nullStateRadioButton">
+             <property name="text">
+              <string>NULL STATE</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QRadioButton" name="readyRadioButton">
+             <property name="text">
+              <string>READY</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QRadioButton" name="pausedRadioButton">
+             <property name="text">
+              <string>PAUSED</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="playingRadioButton">
+             <property name="text">
+              <string>PLAYING</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="removeObjectButton">
           <property name="text">
            <string>Remove</string>
@@ -174,7 +218,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>894</width>
+     <width>841</width>
      <height>19</height>
     </rect>
    </property>
