@@ -12,6 +12,7 @@
 #include "PluginsInspector.h"
 #include "Logic/IGui.h"
 #include "Workspace/WorkspaceWidget.h"
+#include "Utils/GstUtils.h"
 #include <QMainWindow>
 #include <QtWidgets>
 
@@ -40,6 +41,7 @@ private:
 	std::shared_ptr<MainController> controller;
 
 	void reload_plugin_inspector();
+	void show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent);
 
 private Q_SLOTS:
 	void on_actionExport_Bin_To_Dot_File_triggered(bool);

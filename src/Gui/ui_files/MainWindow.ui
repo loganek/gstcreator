@@ -151,7 +151,13 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="QListWidget" name="selectedObjectListView"/>
+        <widget class="QTreeWidget" name="objectInfoTreeWidget">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
        </item>
       </layout>
      </widget>

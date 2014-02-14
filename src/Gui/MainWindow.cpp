@@ -21,10 +21,19 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 	workspace = new WorkspaceWidget(this);
 	ui->workspaceFrame->layout()->addWidget(workspace);
+	ui->objectInfoTreeWidget->setColumnCount(2);
+	ui->objectInfoTreeWidget->setHeaderLabels(QStringList() << "Key" << "Value");
 
 	connect(workspace, &WorkspaceWidget::selected_item_changed, [this](const Glib::RefPtr<Gst::Object>& o){
 		if (o)
-			qDebug() << o->get_name().c_str();
+		{
+			ui->objectInfoTreeWidget->clear();
+			for (auto a : GstUtils::get_object_info(o))
+			{
+				show_object_info(a.first, a.second, nullptr);
+			}
+		}
+
 	});
 
 	plugins_tree_view.setModel(&filter);
@@ -88,6 +97,17 @@ MainWindow::MainWindow(QWidget *parent)
 	});
 
 	reload_plugin_inspector();
+}
+
+void MainWindow::show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent)
+{
+	QTreeWidgetItem* item = (parent == nullptr) ?
+			new QTreeWidgetItem(ui->objectInfoTreeWidget) : new QTreeWidgetItem(parent);
+	item->setText(0, str.c_str());
+	item->setText(1, inf.get_value().c_str());
+
+	for (auto a : inf.get_map())
+		show_object_info(a.first, a.second, item);
 }
 
 void MainWindow::reload_plugin_inspector()
