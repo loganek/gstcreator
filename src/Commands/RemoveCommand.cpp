@@ -17,13 +17,17 @@ RemoveCommand::RemoveCommand(const RefPtr<Object>& item, const RefPtr<Element>& 
 {
 }
 
+RemoveCommand::RemoveCommand(const RefPtr<Element>& model)
+: Command(model)
+{
+}
+
 void RemoveCommand::run_command()
 {
-	if (item->is_element() && model->is_bin())
-	{
+	if (!item)
+		RefPtr<Bin>::cast_static(model->get_parent())->remove(RefPtr<Element>::cast_static(model));
+	else if (item->is_element() && model->is_bin())
 		RefPtr<Bin>::cast_static(model)->remove(RefPtr<Element>::cast_static(item));
-	}
-
 	else if (item->is_pad() && model->is_element())
 	{
 		if (!RefPtr<Element>::cast_static(model)->remove_pad(RefPtr<Pad>::cast_static(item)))

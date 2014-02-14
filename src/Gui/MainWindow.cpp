@@ -9,6 +9,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "Workspace/WorkspaceWidget.h"
+#include "Commands/RemoveCommand.h"
 #include "ExportToDotDialog.h"
 #include "common.h"
 #include <QLayout>
@@ -25,15 +26,15 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->objectInfoTreeWidget->setHeaderLabels(QStringList() << "Key" << "Value");
 
 	connect(workspace, &WorkspaceWidget::selected_item_changed, [this](const Glib::RefPtr<Gst::Object>& o){
+		ui->objectInfoTreeWidget->clear();
 		if (o)
 		{
-			ui->objectInfoTreeWidget->clear();
 			for (auto a : GstUtils::get_object_info(o))
 			{
 				show_object_info(a.first, a.second, nullptr);
 			}
+			selected_item = o;
 		}
-
 	});
 
 	plugins_tree_view.setModel(&filter);
@@ -58,7 +59,19 @@ MainWindow::MainWindow(QWidget *parent)
 		{
 			show_error(ex.what());
 		}
+	});
 
+	connect(ui->removeObjectButton, &QPushButton::pressed, [this]{
+		if (selected_item)
+		{
+			if (selected_item->is_element())
+				RemoveCommand(Glib::RefPtr<Gst::Element>::cast_static(selected_item)).run_command();
+			else if (selected_item->is_pad())
+			{
+				auto pad = Glib::RefPtr<Gst::Pad>::cast_static(selected_item);
+				RemoveCommand(pad, pad->get_parent_element()).run_command();
+			}
+		}
 	});
 
 	ui->statusbar->addWidget(new QLabel("Current model: "));

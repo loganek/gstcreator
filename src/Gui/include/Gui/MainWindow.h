@@ -37,6 +37,7 @@ private:
 	QLineEdit* model_lineedit;
 	QPushButton* up_model_button;
 	WorkspaceWidget* workspace;
+	Glib::RefPtr<Gst::Object> selected_item;
 
 	std::shared_ptr<MainController> controller;
 

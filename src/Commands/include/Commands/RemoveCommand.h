@@ -19,6 +19,7 @@ private:
 public:
 	RemoveCommand(const Glib::RefPtr<Gst::Object>& item,
 			const Glib::RefPtr<Gst::Element>& model);
+	RemoveCommand(const Glib::RefPtr<Gst::Element>& model);
 
 	void run_command();
 	CommandType get_type();

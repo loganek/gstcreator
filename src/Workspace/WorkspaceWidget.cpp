@@ -154,6 +154,28 @@ void WorkspaceWidget::pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad)
 	}
 }
 
+void WorkspaceWidget::element_removed(const Glib::RefPtr<Gst::Element>& element)
+{
+	QNEBlock* block = find_block(element);
+
+	if (block)
+	{
+		delete block;
+		// todo maybe clear_selected_item method instead?
+		change_selected_item(Glib::RefPtr<Gst::Object>());
+	}
+}
+
+void WorkspaceWidget::pad_removed(const Glib::RefPtr<Gst::Pad>& pad)
+{
+	QNEPort* port = find_port(pad);
+	if (port)
+	{
+		delete port;
+		change_selected_item(Glib::RefPtr<Gst::Object>());
+	}
+}
+
 void WorkspaceWidget::change_selected_item(const Glib::RefPtr<Gst::Object>& object)
 {
 	Q_EMIT selected_item_changed(object);
