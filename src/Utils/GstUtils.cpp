@@ -147,6 +147,7 @@ std::map<std::string, ObjectNodeInfo> GstUtils::get_object_info(const Glib::RefP
 	{
 		info_map.insert({"type", std::string("PAD")});
 		RefPtr<Pad> obj_pad = obj_pad.cast_static(object);
+		info_map.insert({"queried caps", parse_caps(obj_pad->query_caps(RefPtr<Caps>()))});
 		info_map.insert({"current caps", parse_caps(obj_pad->get_current_caps())});
 		info_map.insert({"allowed caps", parse_caps(obj_pad->get_allowed_caps())});
 		auto dir = obj_pad->get_direction();
