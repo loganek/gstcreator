@@ -160,7 +160,14 @@ std::map<std::string, ObjectNodeInfo> GstUtils::get_object_info(const Glib::RefP
 	}
 	else if (object->is_element())
 	{
-		info_map.insert({"type", std::string("ELEMENT")});
+		if (object->is_bin())
+		{
+			info_map.insert({"type", std::string("BIN")});
+			RefPtr<Bin> obj_bin = obj_bin.cast_static(object);
+			info_map.insert({"children count", std::to_string(obj_bin->get_num_children())});
+		}
+		else
+			info_map.insert({"type", std::string("ELEMENT")});
 		RefPtr<Element> obj_element = obj_element.cast_static(object);
 		info_map.insert({"factory", std::string(obj_element->get_factory()->get_name().c_str())});
 	}
