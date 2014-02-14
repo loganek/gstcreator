@@ -96,7 +96,7 @@ void GstController::set_watch_method(const RefPtr<Element>& element)
 			notify_observers<const RefPtr<Element>&>(&IModelObserver::element_added, element);
 			set_watch_method(element);
 		});
-		bin->signal_element_added().connect([this](const RefPtr<Element>& element){
+		bin->signal_element_removed().connect([this](const RefPtr<Element>& element){
 			notify_observers<const RefPtr<Element>&>(&IModelObserver::element_removed, element);
 		});
 	}
