@@ -25,7 +25,12 @@ RemoveCommand::RemoveCommand(const RefPtr<Element>& model)
 void RemoveCommand::run_command()
 {
 	if (!item)
-		RefPtr<Bin>::cast_static(model->get_parent())->remove(RefPtr<Element>::cast_static(model));
+	{
+		if (model->get_parent())
+			RefPtr<Bin>::cast_static(model->get_parent())->remove(RefPtr<Element>::cast_static(model));
+		else
+			throw std::runtime_error("cannot remove element without parent (including main pipeline)");
+	}
 	else if (item->is_element() && model->is_bin())
 		RefPtr<Bin>::cast_static(model)->remove(RefPtr<Element>::cast_static(item));
 	else if (item->is_pad() && model->is_element())

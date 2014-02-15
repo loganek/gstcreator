@@ -154,7 +154,7 @@ void WorkspaceWidget::pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad)
 	}
 }
 
-void WorkspaceWidget::element_removed(const Glib::RefPtr<Gst::Element>& element)
+void WorkspaceWidget::element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin)
 {
 	QNEBlock* block = find_block(element);
 

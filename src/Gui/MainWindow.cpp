@@ -52,15 +52,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 	for (int i = 0; i < 5; i++)
 		connect(state_buttons[i], &QPushButton::toggled, [this, i](bool){
-			if (!state_transaction && state_buttons[i]->isChecked() && selected_item && selected_item->is_element())
-			{
-				auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
-				StateCommand((StateType)i, se).run_command();
-				Gst::State state, pending;
-				se->get_state(state, pending, 0);
-				state_changed(se, state);
-			}
-		});
+		if (!state_transaction && state_buttons[i]->isChecked() && selected_item && selected_item->is_element())
+		{
+			auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
+			StateCommand((StateType)i, se).run_command();
+			Gst::State state, pending;
+			se->get_state(state, pending, 0);
+			state_changed(se, state);
+		}
+	});
 
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
@@ -120,21 +120,26 @@ MainWindow::MainWindow(QWidget *parent)
 	up_model_button = new QPushButton("UP");
 	up_model_button->setEnabled(false);
 	ui->statusbar->addWidget(up_model_button);
-	connect(up_model_button, &QPushButton::pressed, [this](){
+	connect(up_model_button, &QPushButton::pressed, [this]{
 		if (controller->get_current_model()->get_parent() && controller->get_current_model()->get_parent()->is_bin())
 		{
-			try
-			{
-				controller->update_current_model(Glib::RefPtr<Gst::Bin>::cast_static(controller->get_current_model()->get_parent()));
-			}
-			catch (const std::runtime_error& ex)
-			{
-				show_error(ex.what());
-			}
+			change_current_model(Glib::RefPtr<Gst::Bin>::cast_static(controller->get_current_model()->get_parent()));
 		}
 	});
 
 	reload_plugin_inspector();
+}
+
+void MainWindow::change_current_model(const Glib::RefPtr<Gst::Bin>& bin)
+{
+	try
+	{
+		controller->update_current_model(bin);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		show_error(ex.what());
+	}
 }
 
 void MainWindow::show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent)
@@ -175,6 +180,12 @@ void MainWindow::state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::S
 	state_transaction = true;
 	state_buttons[static_cast<int>(state)]->setChecked(true);
 	state_transaction = false;
+}
+
+void MainWindow::element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin)
+{
+	if (element == controller->get_current_model())
+		change_current_model(bin);
 }
 
 void MainWindow::set_controller(std::shared_ptr<MainController> controller)

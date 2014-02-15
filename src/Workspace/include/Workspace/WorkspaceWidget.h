@@ -50,7 +50,7 @@ public:
 	void pad_linked(const Glib::RefPtr<Gst::Pad>& proxy_pad);
 	void pad_unlinked(const Glib::RefPtr<Gst::Pad>& proxy_pad);
 	void element_added(const Glib::RefPtr<Gst::Element>& element);
-	void element_removed(const Glib::RefPtr<Gst::Element>& element);
+	void element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin);
 
 Q_SIGNALS:
 	void selected_item_changed(const Glib::RefPtr<Gst::Object>& object);

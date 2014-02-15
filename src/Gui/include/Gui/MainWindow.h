@@ -46,7 +46,10 @@ private:
 
 	void reload_plugin_inspector();
 	void show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent);
+	void change_current_model(const Glib::RefPtr<Gst::Bin>& bin);
+
 	void state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state);
+	void element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin);
 
 private Q_SLOTS:
 	void on_actionExport_Bin_To_Dot_File_triggered(bool);
