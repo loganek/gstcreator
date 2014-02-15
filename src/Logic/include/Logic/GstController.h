@@ -22,6 +22,7 @@ private:
 	std::set<IModelObserver*> observers;
 
 	void set_watch_method(const Glib::RefPtr<Gst::Element>& element);
+	bool bus_method(const Glib::RefPtr<Gst::Bus>& bus, const Glib::RefPtr<Gst::Message>& message);
 
 	template<typename ...Args>
 	void notify_observers(void (IModelObserver::* fun)(Args...), Args... args)

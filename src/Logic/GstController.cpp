@@ -16,6 +16,27 @@ GstController::GstController(const Glib::RefPtr<Gst::Pipeline>& master_model)
   current_model(master_model)
 {
 	set_watch_method(master_model);
+
+	master_model->get_bus()->add_watch(sigc::mem_fun(this, &GstController::bus_method));
+}
+
+bool GstController::bus_method(const RefPtr<Bus>& bus, const RefPtr<Message>& message)
+{
+	switch (message->get_message_type())
+	{
+	case MESSAGE_STATE_CHANGED:
+	{
+		auto state = RefPtr<MessageStateChanged>::cast_static(message)->parse();
+		if (message->get_source()->is_element())
+			notify_observers<const RefPtr<Element>&, Gst::State>(&IModelObserver::state_changed,
+					RefPtr<Element>::cast_static(message->get_source()), state);
+		break;
+	}
+	default:
+		break;
+	}
+
+	return true;
 }
 
 void GstController::update_current_model(const RefPtr<Bin>& model)

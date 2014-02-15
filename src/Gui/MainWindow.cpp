@@ -18,7 +18,8 @@
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
-  ui(new Ui::MainWindow)
+  ui(new Ui::MainWindow),
+  state_transaction(false)
 {
 	ui->setupUi(this);
 	workspace = new WorkspaceWidget(this);
@@ -35,16 +36,30 @@ MainWindow::MainWindow(QWidget *parent)
 				show_object_info(a.first, a.second, nullptr);
 			}
 			selected_item = o;
+
+			if (selected_item->is_element())
+			{
+				auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
+				Gst::State state, pending;
+				se->get_state(state, pending, 0);
+				state_changed(se, state);
+			}
 		}
 	});
 
-	QRadioButton* state_buttons[] = {ui->voidPendingRadioButton, ui->nullStateRadioButton,
+	state_buttons = {ui->voidPendingRadioButton, ui->nullStateRadioButton,
 			ui->readyRadioButton, ui->pausedRadioButton, ui->playingRadioButton};
 
 	for (int i = 0; i < 5; i++)
-		connect(state_buttons[i], &QPushButton::toggled, [this, state_buttons, i](bool){
-			if (state_buttons[i]->isChecked() && selected_item && selected_item->is_element())
-				StateCommand((StateType)i, Glib::RefPtr<Gst::Element>::cast_static(selected_item)).run_command();
+		connect(state_buttons[i], &QPushButton::toggled, [this, i](bool){
+			if (!state_transaction && state_buttons[i]->isChecked() && selected_item && selected_item->is_element())
+			{
+				auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
+				StateCommand((StateType)i, se).run_command();
+				Gst::State state, pending;
+				se->get_state(state, pending, 0);
+				state_changed(se, state);
+			}
 		});
 
 	plugins_tree_view.setModel(&filter);
@@ -155,6 +170,13 @@ std::shared_ptr<MainController> MainWindow::get_controller() const
 	return this->controller;
 }
 
+void MainWindow::state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state)
+{
+	state_transaction = true;
+	state_buttons[static_cast<int>(state)]->setChecked(true);
+	state_transaction = false;
+}
+
 void MainWindow::set_controller(std::shared_ptr<MainController> controller)
 {
 	this->controller = controller;
@@ -164,6 +186,9 @@ void MainWindow::set_controller(std::shared_ptr<MainController> controller)
 	{
 		safe_call<MainController, void, IModelObserver*>(controller.get(),
 				&MainController::register_model_observer, static_cast<IModelObserver*>(workspace));
+		safe_call<MainController, void, IModelObserver*>(controller.get(),
+				&MainController::register_model_observer, static_cast<IModelObserver*>(this));
+
 	}
 	catch (const std::runtime_error& ex)
 	{

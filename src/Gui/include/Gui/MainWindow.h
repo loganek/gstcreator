@@ -18,7 +18,7 @@
 
 namespace Ui{class MainWindow;}
 
-class MainWindow : public QMainWindow, public IGui
+class MainWindow : public QMainWindow, public IGui, public IModelObserver
 {
 	Q_OBJECT
 public:
@@ -41,8 +41,12 @@ private:
 
 	std::shared_ptr<MainController> controller;
 
+	std::vector<QRadioButton*> state_buttons;
+	bool state_transaction;
+
 	void reload_plugin_inspector();
 	void show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent);
+	void state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state);
 
 private Q_SLOTS:
 	void on_actionExport_Bin_To_Dot_File_triggered(bool);
