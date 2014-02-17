@@ -21,6 +21,7 @@ public:
 	virtual void element_added(const Glib::RefPtr<Gst::Element>& element) {}
 	virtual void element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin) {}
 	virtual void state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state) {}
+	virtual void property_changed(const Glib::RefPtr<Gst::Element>& element, const std::string& name) {}
 
 };
 

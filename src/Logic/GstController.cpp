@@ -98,6 +98,16 @@ void GstController::set_watch_method(const RefPtr<Element>& element)
 		notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_removed, pad);
 	});
 
+	unsigned int property_count;
+	GParamSpec **property_specs = g_object_class_list_properties(
+			G_OBJECT_GET_CLASS(element->gobj()), &property_count);
+
+	for (size_t i = 0; i < property_count; i++)
+		element->connect_property_changed(property_specs[i]->name, [this, element, i, property_specs]{
+			notify_observers<const RefPtr<Element>&, const std::string&>(
+					&IModelObserver::property_changed, element, property_specs[i]->name);
+		});
+
 	auto iterator = element->iterate_pads();
 	while (iterator.next())
 	{
