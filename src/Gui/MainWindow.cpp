@@ -11,6 +11,7 @@
 #include "Workspace/WorkspaceWidget.h"
 #include "Commands/RemoveCommand.h"
 #include "Commands/StateCommand.h"
+#include "Properties/Property.h"
 #include "ExportToDotDialog.h"
 #include "common.h"
 #include <QLayout>
@@ -40,6 +41,14 @@ MainWindow::MainWindow(QWidget *parent)
 			if (selected_item->is_element())
 			{
 				auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
+				QLayoutItem* item;
+				while ((item = ui->tabWidget->widget(1)->layout()->takeAt(0)) != nullptr)
+				{
+					delete item->widget();
+					delete item;
+				}
+
+				ui->tabWidget->widget(1)->layout()->addWidget(Property::build_property_widget(se));
 				Gst::State state, pending;
 				se->get_state(state, pending, 0);
 				state_changed(se, state);
