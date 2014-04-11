@@ -48,7 +48,10 @@ QWidget* Property::build_property_widget(const RefPtr<Element>& element)
 	{
 		Property* property = build_property(property_specs[i], element, "");
 		if (property != nullptr)
+		{
 			widget->layout()->addWidget(property->get_widget());
+			property->update_widget();
+		}
 	}
 
 	scroll_area->setWidget(widget);
