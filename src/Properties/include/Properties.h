@@ -11,5 +11,6 @@
 
 #include "Properties/Property.h"
 #include "Properties/PropertyString.h"
+#include "Properties/PropertyBoolean.h"
 
 #endif /* PROPERTIES_H_ */

@@ -6,8 +6,7 @@
  *     Author: Marcin Kolny <marcin.kolny@gmail.com>
  */
 
-#include "Properties/Property.h"
-#include "Properties/PropertyString.h"
+#include "Properties.h"
 #include <QScrollArea>
 #include <QLayout>
 
@@ -70,6 +69,8 @@ Property* Property::build_property(GParamSpec* param_spec,
 	{
 	case G_TYPE_STRING:
 		return new PropertyString(param_spec, element);
+	case G_TYPE_BOOLEAN:
+		return new PropertyBoolean(param_spec, element);
 	default:
 		return nullptr;
 	}
