@@ -72,8 +72,15 @@ Property* Property::build_property(GParamSpec* param_spec,
 	case G_TYPE_BOOLEAN:
 		return new PropertyBoolean(param_spec, element);
 	default:
-		return nullptr;
+		break;
 	}
+
+	if (G_IS_PARAM_SPEC_ENUM (param_spec))
+	{
+		return new PropertyEnum(param_spec, element);
+	}
+
+	return nullptr;
 }
 
 QWidget* Property::get_widget()
