@@ -9,11 +9,10 @@
 #define PROPERTYBOOLEAN_H_
 
 #include "Property.h"
-#include "ILockable.h"
 
 class QCheckBox;
 
-class PropertyBoolean : public Property, public ILockable
+class PropertyBoolean : public Property
 {
 private:
 	QCheckBox* checkbox;

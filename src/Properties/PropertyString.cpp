@@ -21,6 +21,12 @@ void PropertyString::build_widget()
 	widget->setLayout(new QHBoxLayout);
 	widget->layout()->addWidget(new QLabel(param_spec->name));
 	edit = new QLineEdit();
+
+	QObject::connect(edit, &QLineEdit::returnPressed, [this] {
+		element->property<Glib::ustring>(param_spec->name, edit->text().toStdString());
+		update_widget();
+	});
+
 	widget->layout()->addWidget(edit);
 }
 

@@ -24,7 +24,6 @@ void PropertyBoolean::build_widget()
 	widget->layout()->addWidget(checkbox);
 
 	QObject::connect(checkbox, &QCheckBox::toggled, [this](bool v){
-		is_locked();
 		element->property(param_spec->name, v);
 		update_widget();
 	});
@@ -32,7 +31,6 @@ void PropertyBoolean::build_widget()
 
 void PropertyBoolean::update_widget()
 {
-	TransactionLocker lock(this);
 	gboolean value;
 	element->get_property(param_spec->name, value);
 	checkbox->setChecked(value);
