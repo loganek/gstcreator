@@ -95,7 +95,10 @@ Property* Property::build_property(GParamSpec* param_spec,
 	{
 		return new PropertyEnum(param_spec, element);
 	}
-
+	else if (!strcmp("GstCaps", g_type_name(value_type)))
+	{
+		return new PropertyCaps(param_spec, element);
+	}
 	return nullptr;
 }
 

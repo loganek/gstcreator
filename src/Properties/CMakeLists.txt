@@ -6,6 +6,7 @@ set(PROPERTIES_HEADERS
 	include/Properties/PropertyBoolean.h
 	include/Properties/PropertyEnum.h
 	include/Properties/PropertyNumeric.h
+	include/Properties/PropertyCaps.h
 	include/Properties/ILockable.h
 )
 
@@ -15,6 +16,7 @@ add_library(Properties
 	PropertyBoolean.cpp
 	PropertyEnum.cpp
 	PropertyNumeric.cpp
+	PropertyCaps.cpp
 	${PROPERTIES_HEADERS}
 )
 
