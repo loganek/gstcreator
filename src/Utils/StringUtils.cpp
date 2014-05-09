@@ -55,3 +55,18 @@ string StringUtils::to_lower(string text)
 	transform(text.begin(), text.end(), text.begin(), ::tolower);
 	return text;
 }
+
+#define STR_TO_NUM(type, cpp_method) template<> \
+type StringUtils::str_to_numeric(const std::string& value) \
+{ \
+	return cpp_method(value); \
+}
+
+STR_TO_NUM(int, stoi)
+STR_TO_NUM(long, stol)
+STR_TO_NUM(long long, stoll)
+STR_TO_NUM(unsigned int, stoul)
+STR_TO_NUM(unsigned long, stoul)
+STR_TO_NUM(unsigned long long, stoull)
+STR_TO_NUM(float, stof)
+STR_TO_NUM(double, stod)

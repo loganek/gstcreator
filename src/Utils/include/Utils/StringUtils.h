@@ -22,6 +22,9 @@ public:
 
 	static std::string to_upper(std::string text);
 	static std::string to_lower(std::string text);
+
+	template<typename T>
+	static T str_to_numeric(const std::string& value);
 };
 
 #endif /* STRINGUTILS_H_ */

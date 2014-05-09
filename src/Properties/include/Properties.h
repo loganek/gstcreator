@@ -13,6 +13,7 @@
 #include "Properties/PropertyString.h"
 #include "Properties/PropertyBoolean.h"
 #include "Properties/PropertyEnum.h"
+#include "Properties/PropertyNumeric.h"
 #include "Properties/ILockable.h"
 
 #endif /* PROPERTIES_H_ */

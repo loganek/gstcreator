@@ -5,6 +5,7 @@ set(PROPERTIES_HEADERS
 	include/Properties/PropertyString.h
 	include/Properties/PropertyBoolean.h
 	include/Properties/PropertyEnum.h
+	include/Properties/PropertyNumeric.h
 	include/Properties/ILockable.h
 )
 
@@ -13,7 +14,9 @@ add_library(Properties
 	PropertyString.cpp
 	PropertyBoolean.cpp
 	PropertyEnum.cpp
+	PropertyNumeric.cpp
 	${PROPERTIES_HEADERS}
 )
 
+target_link_libraries(Properties Utils)
 qt5_use_modules(Properties Widgets)

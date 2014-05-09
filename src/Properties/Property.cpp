@@ -71,6 +71,22 @@ Property* Property::build_property(GParamSpec* param_spec,
 		return new PropertyString(param_spec, element);
 	case G_TYPE_BOOLEAN:
 		return new PropertyBoolean(param_spec, element);
+	case G_TYPE_INT:
+		return new PropertyNumeric<gint>(param_spec, element);
+	case G_TYPE_UINT:
+		return new PropertyNumeric<guint>(param_spec, element);
+	case G_TYPE_LONG:
+		return new PropertyNumeric<glong>(param_spec, element);
+	case G_TYPE_ULONG:
+		return new PropertyNumeric<gulong>(param_spec, element);
+	case G_TYPE_INT64:
+		return new PropertyNumeric<gint64>(param_spec, element);
+	case G_TYPE_UINT64:
+		return new PropertyNumeric<guint64>(param_spec, element);
+	case G_TYPE_FLOAT:
+		return new PropertyNumeric<gfloat>(param_spec, element);
+	case G_TYPE_DOUBLE:
+		return new PropertyNumeric<gdouble>(param_spec, element);
 	default:
 		break;
 	}
