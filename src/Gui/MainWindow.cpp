@@ -10,6 +10,7 @@
 #include "ui_MainWindow.h"
 #include "Workspace/WorkspaceWidget.h"
 #include "Commands/RemoveCommand.h"
+#include "Commands/AddCommand.h"
 #include "Commands/StateCommand.h"
 #include "Properties/Property.h"
 #include "ExportToDotDialog.h"
@@ -28,33 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->objectInfoTreeWidget->setColumnCount(2);
 	ui->objectInfoTreeWidget->setHeaderLabels(QStringList() << "Key" << "Value");
 
-	connect(workspace, &WorkspaceWidget::selected_item_changed, [this](const Glib::RefPtr<Gst::Object>& o){
-		ui->objectInfoTreeWidget->clear();
-		if (o)
-		{
-			for (auto a : GstUtils::get_object_info(o))
-			{
-				show_object_info(a.first, a.second, nullptr);
-			}
-			selected_item = o;
-
-			if (selected_item->is_element())
-			{
-				auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
-				QLayoutItem* item;
-				while ((item = ui->tabWidget->widget(1)->layout()->takeAt(0)) != nullptr)
-				{
-					delete item->widget();
-					delete item;
-				}
-
-				ui->tabWidget->widget(1)->layout()->addWidget(Property::build_property_widget(se));
-				Gst::State state, pending;
-				se->get_state(state, pending, 0);
-				state_changed(se, state);
-			}
-		}
-	});
+	connect(workspace, &WorkspaceWidget::selected_item_changed, this, &MainWindow::selected_item_changed);
 
 	state_buttons = {ui->voidPendingRadioButton, ui->nullStateRadioButton,
 			ui->readyRadioButton, ui->pausedRadioButton, ui->playingRadioButton};
@@ -138,6 +113,58 @@ MainWindow::MainWindow(QWidget *parent)
 
 	reload_plugin_inspector();
 }
+
+void MainWindow::clear_layout(QLayout* layout)
+{
+	QLayoutItem* item;
+	while ((item = layout->takeAt(0)) != nullptr)
+	{
+		delete item->widget();
+		delete item;
+	}
+}
+
+void MainWindow::selected_item_changed(const Glib::RefPtr<Gst::Object>& o)
+{
+	ui->objectInfoTreeWidget->clear();
+	if (o)
+	{
+		for (auto a : GstUtils::get_object_info(o))
+		{
+			show_object_info(a.first, a.second, nullptr);
+		}
+		selected_item = o;
+
+		if (selected_item->is_element())
+		{
+			auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
+
+			clear_layout(ui->tabWidget->widget(1)->layout());
+			ui->tabWidget->widget(1)->layout()->addWidget(Property::build_property_widget(se));
+			Gst::State state, pending;
+			se->get_state(state, pending, 0);
+			state_changed(se, state);
+
+			clear_layout(ui->requestPadsGroupBox->layout());
+
+			if (se->get_factory())
+			{
+				auto pad_templates = se->get_factory()->get_static_pad_templates();
+
+				for (auto tpl : pad_templates)
+					if (tpl.get_presence() == Gst::PAD_REQUEST)
+					{
+						auto btn = new QPushButton(tpl.get_name_template().c_str());
+						QObject::connect(btn, &QPushButton::clicked, [se, tpl](bool){
+							AddCommand(se->get_pad_template(tpl.get_name_template()), se);
+						});
+						ui->requestPadsGroupBox->layout()->addWidget(btn);
+					}
+			}
+		}
+	}
+}
+
 
 void MainWindow::change_current_model(const Glib::RefPtr<Gst::Bin>& bin)
 {

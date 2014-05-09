@@ -51,6 +51,11 @@ private:
 	void state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state);
 	void element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin);
 
+	void clear_layout(QLayout* layout);
+
+private Q_SLOTS:
+	void selected_item_changed(const Glib::RefPtr<Gst::Object>& o);
+
 private Q_SLOTS:
 	void on_actionExport_Bin_To_Dot_File_triggered(bool);
 };

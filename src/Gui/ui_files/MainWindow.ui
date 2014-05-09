@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
+    <width>977</width>
     <height>644</height>
    </rect>
   </property>
@@ -223,6 +223,14 @@
               </column>
              </widget>
             </item>
+            <item>
+             <widget class="QGroupBox" name="requestPadsGroupBox">
+              <property name="title">
+               <string>Request pads</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6"/>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="tab_2">
@@ -244,8 +252,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>841</width>
-     <height>19</height>
+     <width>977</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
