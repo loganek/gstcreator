@@ -22,9 +22,6 @@ PluginsInspectorModel::PluginsInspectorModel(FillInspectorMethod method, QObject
 
 	for (RefPtr<Plugin> plugin : registry->get_plugin_list())
 	{
-		if (GST_OBJECT_FLAG_IS_SET (plugin->gobj(), GST_PLUGIN_FLAG_BLACKLISTED))
-			return;
-
 		if (method == FillInspectorMethod::BY_KLASS)
 			fill_inspector_by_klass(plugin);
 		else

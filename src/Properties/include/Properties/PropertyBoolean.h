@@ -9,10 +9,11 @@
 #define PROPERTYBOOLEAN_H_
 
 #include "Property.h"
+#include "ILockable.h"
 
 class QCheckBox;
 
-class PropertyBoolean : public Property
+class PropertyBoolean : public Property, public ILockable
 {
 private:
 	QCheckBox* checkbox;
@@ -22,7 +23,6 @@ private:
 
 public:
 	PropertyBoolean(GParamSpec* param_spec, const Glib::RefPtr<Gst::Element>& element);
-
 };
 
 #endif /* PROPERTYBOOLEAN_H_ */
