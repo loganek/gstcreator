@@ -37,6 +37,11 @@ void AddCommand::run_command()
 		if (!RefPtr<Element>::cast_static(model)->add_pad(RefPtr<Pad>::cast_static(item)))
 			throw std::runtime_error("cannot add pad");
 	}
+	else if (item->is_pad_template() && model->is_element())
+	{
+		if (!RefPtr<Element>::cast_static(model)->request_pad(RefPtr<PadTemplate>::cast_static(item)))
+			throw std::runtime_error("cannot add request pad");
+	}
 	else
 		throw std::runtime_error("unknow item type");
 }

@@ -174,7 +174,7 @@ void MainWindow::selected_item_changed(const Glib::RefPtr<Gst::Object>& o)
 					{
 						auto btn = new QPushButton(tpl.get_name_template().c_str());
 						QObject::connect(btn, &QPushButton::clicked, [se, tpl](bool){
-							AddCommand(se->get_pad_template(tpl.get_name_template()), se);
+							AddCommand(se->get_pad_template(tpl.get_name_template()), se).run_command();
 						});
 						ui->requestPadsGroupBox->layout()->addWidget(btn);
 					}
