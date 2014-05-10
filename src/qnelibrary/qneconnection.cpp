@@ -114,3 +114,8 @@ void QNEConnection::connection_color(int status)
 
 	setPen(QPen(color, 2));
 }
+
+Glib::RefPtr<Link> QNEConnection::get_model()
+{
+	return Glib::RefPtr<Link>(new Link(port1->get_object_model(), port2->get_object_model()));
+}

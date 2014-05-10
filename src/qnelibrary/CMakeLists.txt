@@ -13,4 +13,6 @@ add_library(qnelibrary
 	${QNELIBRARY_HEADERS}
 )
 
+target_link_libraries(qnelibrary GstreamerExtensions)
+
 qt5_use_modules(qnelibrary Widgets)

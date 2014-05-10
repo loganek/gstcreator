@@ -179,6 +179,11 @@ bool EventFilter::mouse_press_handler(QEvent* e)
 			auto block_item = static_cast<QNEBlock*>(item);
 			workspace->change_selected_item(block_item->get_model());
 		}
+		else if (item->type() == QNEConnection::Type)
+		{
+			auto connection_item = static_cast<QNEConnection*>(item);
+			workspace->change_selected_item(connection_item->get_model());
+		}
 		else
 		{
 			workspace->change_selected_item(workspace->get_controller()->get_current_model());

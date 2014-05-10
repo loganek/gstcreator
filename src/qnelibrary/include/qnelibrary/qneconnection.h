@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #define QNECONNECTION_H
 
 #include "qneport.h"
+#include "GstreamerExtensions/Link.h"
 #include <QGraphicsPathItem>
 
 class QNEPort;
@@ -48,7 +49,7 @@ public:
 	void connection_color(int status);
 
 	int type() const { return Type; }
-
+	Glib::RefPtr<Link> get_model();
 private:
 	QNEPort* port1;
 	QNEPort* port2;

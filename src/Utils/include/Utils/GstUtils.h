@@ -46,6 +46,7 @@ public:
 	static bool is_sink_element(const Glib::RefPtr<Gst::Element>& element);
 	static bool is_src_element(const Glib::RefPtr<Gst::Element>& element);
 	static std::map<std::string, ObjectNodeInfo> get_object_info(const Glib::RefPtr<Gst::Object>& object);
+	static Glib::RefPtr<Gst::Element> get_top_level_parent(const Glib::RefPtr<Gst::Object>& object);
 };
 
 #endif /* GSTUTILS_H_ */

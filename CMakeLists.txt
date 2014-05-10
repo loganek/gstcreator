@@ -29,7 +29,8 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/Utils/include
 	${PROJECT_SOURCE_DIR}/Logic/include
 	${PROJECT_SOURCE_DIR}/Workspace/include
-	${PROJECT_SOURCE_DIR}/Properties/include)
+	${PROJECT_SOURCE_DIR}/Properties/include
+	${PROJECT_SOURCE_DIR}/GstreamerExtensions/include)
 
 add_subdirectory(src)
 add_subdirectory(test)

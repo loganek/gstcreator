@@ -9,9 +9,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "Workspace/WorkspaceWidget.h"
-#include "Commands/RemoveCommand.h"
-#include "Commands/AddCommand.h"
-#include "Commands/StateCommand.h"
+#include "Commands.h"
 #include "Properties/Property.h"
 #include "ExportToDotDialog.h"
 #include "common.h"
@@ -74,11 +72,31 @@ MainWindow::MainWindow(QWidget *parent)
 		if (selected_item)
 		{
 			if (selected_item->is_element())
+			{
 				RemoveCommand(Glib::RefPtr<Gst::Element>::cast_static(selected_item)).run_command();
+			}
 			else if (selected_item->is_pad())
 			{
 				auto pad = Glib::RefPtr<Gst::Pad>::cast_static(selected_item);
 				RemoveCommand(pad, pad->get_parent_element()).run_command();
+			}
+			else if (Glib::RefPtr<Link>::cast_static(selected_item))
+			{
+				Glib::RefPtr<Gst::Object> model;
+				auto link = Glib::RefPtr<Link>::cast_static(selected_item);
+
+				if (!link->get_source() || !link->get_destination())
+				{
+					return;
+				}
+				if (link->get_source()->is_pad())
+					model = link->get_source();
+				else if (link->get_destination()->is_pad())
+					model = link->get_destination();
+
+				if (model)
+					UnlinkCommand(Glib::RefPtr<Gst::Pad>::cast_static(model)).run_command();
+				// else todo wtf????
 			}
 		}
 	});

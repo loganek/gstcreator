@@ -11,4 +11,5 @@ add_library(Utils
 	${UTILS_HEADERS}
 )
 
+target_link_libraries(Utils GstreamerExtensions)
 include_directories(include/Utils)

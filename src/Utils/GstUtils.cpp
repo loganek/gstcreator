@@ -6,7 +6,10 @@
  */
 
 #include "GstUtils.h"
+#include "StringUtils.h"
+#include "GstreamerExtensions/Link.h"
 #include <iostream>
+
 using namespace Gst;
 using Glib::RefPtr;
 using namespace std;
@@ -182,6 +185,18 @@ std::map<std::string, ObjectNodeInfo> GstUtils::get_object_info(const Glib::RefP
 		for (auto i : parse_pad_template(obj_pad_template))
 			info_map.insert(i);
 	}
+	else if (RefPtr<Link>::cast_static(object))
+	{
+		auto link = RefPtr<Link>::cast_static(object);
+		info_map.insert({"type", std::string("LINK")});
+		std::vector<std::string> vec_path =
+					GstUtils::get_path(link->get_source(), get_top_level_parent(link->get_source()));
+		vec_path.erase(vec_path.begin());
+		info_map.insert({"source pad", StringUtils::join(vec_path, ":")});
+		vec_path = GstUtils::get_path(link->get_destination(), get_top_level_parent(link->get_destination()));
+				vec_path.erase(vec_path.begin());
+		info_map.insert({"destination pad", StringUtils::join(vec_path, ":")});
+	}
 
 	info_map.insert({"name", ObjectNodeInfo(object->get_name())});
 	info_map.insert({"path", ObjectNodeInfo(object->get_path_string())});
@@ -189,4 +204,19 @@ std::map<std::string, ObjectNodeInfo> GstUtils::get_object_info(const Glib::RefP
 
 
 	return info_map;
+}
+
+RefPtr<Element> GstUtils::get_top_level_parent(const RefPtr<Object>& object)
+{
+	RefPtr<Object> o = object;
+
+	while (o->get_parent())
+	{
+		o = o->get_parent();
+	}
+
+	if (o->is_element())
+		return RefPtr<Element>::cast_static(o);
+
+	return RefPtr<Element>();
 }
