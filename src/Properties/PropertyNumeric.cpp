@@ -50,8 +50,15 @@ template class PropertyNumeric<gint>;
 template class PropertyNumeric<guint>;
 template class PropertyNumeric<glong>;
 template class PropertyNumeric<gulong>;
+// Check GCC
+#if __GNUC__
+#if !(__x86_64__ || __ppc64__)
 template class PropertyNumeric<gint64>;
 template class PropertyNumeric<guint64>;
+#endif
+#else
+#error unsupported compiler
+#endif
 template class PropertyNumeric<gfloat>;
 template class PropertyNumeric<gdouble>;
 
