@@ -60,8 +60,18 @@ void GstProbeManager::set_probe (RefPtr<Pad> pad, PadProbeType type)
 {
 	remove_probe(pad, type);
 
-	probe_ides[pad][type] = pad->add_probe(type, [](const RefPtr<Pad>& pad, const PadProbeInfo& info) {
-		// todo do something here
+	probe_ides[pad][type] = pad->add_probe(type, [this](const RefPtr<Pad>& pad, const PadProbeInfo& info) {
+		PadProbeInfo tmp = const_cast<PadProbeInfo&>(info);
+		if (tmp.get_type() & PAD_PROBE_TYPE_BUFFER)
+			for (auto observer : observers)
+				observer->buffer_probe(pad, tmp.get_buffer());
+		if (tmp.get_type() & (PAD_PROBE_TYPE_EVENT_DOWNSTREAM | PAD_PROBE_TYPE_EVENT_UPSTREAM))
+			for (auto observer : observers)
+				observer->event_probe(pad, tmp.get_event());
+		if (tmp.get_type() & (PAD_PROBE_TYPE_QUERY_DOWNSTREAM | PAD_PROBE_TYPE_QUERY_UPSTREAM))
+			for (auto observer : observers)
+				observer->query_probe(pad, tmp.get_query());
+
 		return Gst::PAD_PROBE_OK;
 	});
 }
@@ -79,4 +89,16 @@ bool GstProbeManager::is_probe_exists (RefPtr<Pad> pad, PadProbeType type)
 {
 	return probe_ides.find(pad) != probe_ides.end() &&
 			probe_ides[pad].find(type) != probe_ides[pad].end();
+}
+
+void GstProbeManager::register_probe_observer(IProbeObserver* observer)
+{
+	if (!observers.insert(observer).second)
+		throw std::runtime_error("Cannot register observer");
+}
+
+void GstProbeManager::unregister_probe_observer(IProbeObserver* observer)
+{
+	if (!observers.erase(observer))
+		throw std::runtime_error("Cannot unregister observer");
 }

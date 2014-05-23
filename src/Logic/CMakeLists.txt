@@ -3,6 +3,7 @@ set(LOGIC_HEADERS
 	include/Logic/MainController.h
 	include/Logic/IModelObserver.h
 	include/Logic/GstProbeManager.h
+	include/Logic/IProbeObserver.h
 )
 
 include_directories(include/Logic)

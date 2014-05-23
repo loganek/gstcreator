@@ -8,8 +8,10 @@
 #ifndef GSTPROBEMANAGER_H_
 #define GSTPROBEMANAGER_H_
 
+#include "IProbeObserver.h"
 #include <gstreamermm.h>
 #include <utility>
+#include <set>
 #include <vector>
 
 // todo move to another file this hack
@@ -33,6 +35,9 @@ class GstProbeManager
 private:
 	std::map<Glib::RefPtr<Gst::Pad>, std::map<Gst::PadProbeType, gulong>> probe_ides;
 
+	std::set<IProbeObserver*> observers;
+
+
 public:
 	virtual ~GstProbeManager() {}
 
@@ -41,6 +46,10 @@ public:
 	void set_probe (Glib::RefPtr<Gst::Pad> pad, Gst::PadProbeType type);
 	void remove_probe (Glib::RefPtr<Gst::Pad> pad, Gst::PadProbeType type);
 	bool is_probe_exists (Glib::RefPtr<Gst::Pad> pad, Gst::PadProbeType type);
+
+	// todo copy & paste code from GstController
+	void register_probe_observer(IProbeObserver* observer);
+	void unregister_probe_observer(IProbeObserver* observer);
 };
 
 #endif /* GSTPROBEMANAGER_H_ */
