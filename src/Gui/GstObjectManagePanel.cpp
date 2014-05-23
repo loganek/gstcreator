@@ -10,22 +10,9 @@
 #include "Commands.h"
 #include "Properties/Property.h"
 #include "GstreamerExtensions/Link.h"
+#include "Logic/GstProbeManager.h"
+#include <QGridLayout>
 
-// todo move to another file this hack
-#include <type_traits>
-#include <sigc++/sigc++.h>
-namespace sigc
-{
-template <typename Functor>
-struct functor_trait<Functor, false>
-{
-	typedef decltype (::sigc::mem_fun (std::declval<Functor&> (),
-			&Functor::operator())) _intermediate;
-
-	typedef typename _intermediate::result_type result_type;
-	typedef Functor functor_type;
-};
-}
 
 GstObjectManagePanel::GstObjectManagePanel(QWidget *parent)
 : QWidget(parent),
@@ -84,26 +71,6 @@ GstObjectManagePanel::GstObjectManagePanel(QWidget *parent)
 			}
 		}
 	});
-
-
-
-	static std::map<Glib::RefPtr<Gst::Pad>, gulong> probe_ides;
-	connect(ui->probeBufferCheckBox, &QCheckBox::toggled, [this](bool c) {
-		Glib::RefPtr<Gst::Pad> pad = pad.cast_static(selected_item);
-		if (!pad)
-			return;
-		if (c)
-		{
-			probe_ides[pad] = pad->add_probe(Gst::PAD_PROBE_TYPE_BUFFER, [](const Glib::RefPtr<Gst::Pad>& pad, const Gst::PadProbeInfo& info){
-				qDebug() << info.get_id();
-				return Gst::PAD_PROBE_OK;
-			});
-		}
-		else
-		{
-			pad->remove_probe(probe_ides[pad]);
-		}
-	});
 }
 
 GstObjectManagePanel::~GstObjectManagePanel() {
@@ -154,9 +121,52 @@ void GstObjectManagePanel::selected_item_changed(const Glib::RefPtr<Gst::Object>
 		}
 		else if (selected_item->is_pad())
 		{
-			ui->probesGroupBox->show();
+			reload_probes_groupbox();
 		}
 	}
+}
+
+void GstObjectManagePanel::create_probes_groupbox()
+{
+	auto lay = static_cast<QGridLayout*>(ui->probesGroupBox->layout());
+	int row = 0, column = 0;
+	constexpr int col_count = 2;
+
+	for (auto probe_info : GstProbeManager::get_available_probes())
+	{
+		auto cb = new QCheckBox(probe_info.first.c_str());
+		lay->addWidget(cb, row, column++ % col_count);
+
+		if (column % col_count == 0)
+			row++;
+
+		connect(cb, &QCheckBox::toggled, [this, probe_info](bool c) {
+			Glib::RefPtr<Gst::Pad> pad = pad.cast_static(selected_item);
+			if (!pad)
+				return;
+			if (c)
+				probe_manager.set_probe(pad, probe_info.second);
+			else
+				probe_manager.remove_probe(pad, probe_info.second);
+		});
+
+		probe_cbs[probe_info.first] = cb;
+	}
+}
+
+void GstObjectManagePanel::reload_probes_groupbox()
+{
+	if (probe_cbs.empty())
+		create_probes_groupbox();
+
+	Glib::RefPtr<Gst::Pad> pad = pad.cast_static(selected_item);
+
+	for (auto probe_info : GstProbeManager::get_available_probes())
+	{
+		probe_cbs[probe_info.first]->setChecked(probe_manager.is_probe_exists(pad, probe_info.second));
+	}
+
+	ui->probesGroupBox->show();
 }
 
 void GstObjectManagePanel::state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state)

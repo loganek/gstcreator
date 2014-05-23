@@ -2,6 +2,7 @@ set(LOGIC_HEADERS
 	include/Logic/GstController.h
 	include/Logic/MainController.h
 	include/Logic/IModelObserver.h
+	include/Logic/GstProbeManager.h
 )
 
 include_directories(include/Logic)
@@ -9,6 +10,7 @@ include_directories(include/Logic)
 add_library(Logic
 	GstController.cpp
 	MainController.cpp
+	GstProbeManager.cpp
 	${LOGIC_HEADERS}
 )
 

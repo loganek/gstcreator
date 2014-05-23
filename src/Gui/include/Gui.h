@@ -11,5 +11,6 @@
 
 #include "Gui/MainWindow.h"
 #include "Gui/ExportToDotDialog.h"
+#include "Gui/GstObjectManagePanel.h"
 
 #endif /* GUI_H_ */

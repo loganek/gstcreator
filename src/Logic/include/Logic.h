@@ -12,5 +12,6 @@
 #include "Logic/MainController.h"
 #include "Logic/GstController.h"
 #include "Logic/IGui.h"
+#include "Logic/GstProbeManager.h"
 
 #endif /* LOGIC_H_ */

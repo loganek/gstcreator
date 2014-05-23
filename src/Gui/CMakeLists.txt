@@ -18,5 +18,5 @@ add_library(Gui
 	${UIS_HDRS})
 	
 include_directories(include/Gui)
-target_link_libraries(Gui PluginsInspector Workspace Properties)
+target_link_libraries(Gui PluginsInspector Workspace Properties Logic)
 qt5_use_modules(Gui Widgets)

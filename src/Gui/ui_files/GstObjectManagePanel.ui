@@ -98,15 +98,7 @@
          <property name="title">
           <string>Probes</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="probeBufferCheckBox">
-            <property name="text">
-             <string>BUFFER</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QGridLayout" name="gridLayout"/>
         </widget>
        </item>
        <item>

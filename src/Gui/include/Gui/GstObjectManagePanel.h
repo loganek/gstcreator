@@ -10,6 +10,7 @@
 
 #include "Utils/GstUtils.h"
 #include "Logic/IModelObserver.h"
+#include "Logic/GstProbeManager.h"
 #include <gstreamermm.h>
 #include <QtWidgets>
 
@@ -29,13 +30,19 @@ private:
 	Ui::GstObjectManagePanel *ui;
 	Glib::RefPtr<Gst::Object> selected_item;
 
+	GstProbeManager probe_manager;
+
 	std::vector<QRadioButton*> state_buttons;
 	bool state_transaction;
+
+	std::map<std::string, QCheckBox*> probe_cbs;
 
 	void state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state) override;
 
 	void show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent);
 	void clear_layout(QLayout* layout);
+	void reload_probes_groupbox();
+	void create_probes_groupbox();
 
 public Q_SLOTS:
 	void selected_item_changed(const Glib::RefPtr<Gst::Object>& o);
