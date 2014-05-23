@@ -10,56 +10,21 @@
 #include "ui_MainWindow.h"
 #include "Workspace/WorkspaceWidget.h"
 #include "Commands.h"
-#include "Properties/Property.h"
 #include "ExportToDotDialog.h"
 #include "common.h"
 #include <QLayout>
 #include <QMessageBox>
 
 
-// todo move to another file this hack
-#include <type_traits>
-#include <sigc++/sigc++.h>
-namespace sigc
-{
-template <typename Functor>
-struct functor_trait<Functor, false>
-{
-	typedef decltype (::sigc::mem_fun (std::declval<Functor&> (),
-			&Functor::operator())) _intermediate;
-
-	typedef typename _intermediate::result_type result_type;
-	typedef Functor functor_type;
-};
-}
-
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
-  ui(new Ui::MainWindow),
-  state_transaction(false)
+  ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 	workspace = new WorkspaceWidget(this);
 	ui->workspaceFrame->layout()->addWidget(workspace);
-	ui->objectInfoTreeWidget->setColumnCount(2);
-	ui->objectInfoTreeWidget->setHeaderLabels(QStringList() << "Key" << "Value");
-
-	connect(workspace, &WorkspaceWidget::selected_item_changed, this, &MainWindow::selected_item_changed);
-
-	state_buttons = {ui->voidPendingRadioButton, ui->nullStateRadioButton,
-			ui->readyRadioButton, ui->pausedRadioButton, ui->playingRadioButton};
-
-	for (int i = 0; i < 5; i++)
-		connect(state_buttons[i], &QPushButton::toggled, [this, i](bool){
-		if (!state_transaction && state_buttons[i]->isChecked() && selected_item && selected_item->is_element())
-		{
-			auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
-			StateCommand((StateType)i, se).run_command();
-			Gst::State state, pending;
-			se->get_state(state, pending, 0);
-			state_changed(se, state);
-		}
-	});
+	gst_object_manager = new GstObjectManagePanel(this);
+	ui->gstObjectManageFrame->layout()->addWidget(gst_object_manager);
 
 	plugins_tree_view.setModel(&filter);
 	ui->pluginsInspectorFrame->layout()->addWidget(&plugins_tree_view);
@@ -72,50 +37,6 @@ MainWindow::MainWindow(QWidget *parent)
 	});
 	connect(ui->inspectorByPluginRadioButton, &QRadioButton::toggled, [this](bool) {
 		reload_plugin_inspector();
-	});
-
-	connect(ui->runCommandPushButton, &QPushButton::pressed, [this](){
-		try
-		{
-			controller->call_command(ui->commandLineEdit->text().toStdString());
-		}
-		catch (const std::runtime_error& ex)
-		{
-			show_error(ex.what());
-		}
-	});
-
-	connect(ui->removeObjectButton, &QPushButton::pressed, [this]{
-		if (selected_item)
-		{
-			if (selected_item->is_element())
-			{
-				RemoveCommand(Glib::RefPtr<Gst::Element>::cast_static(selected_item)).run_command();
-			}
-			else if (selected_item->is_pad())
-			{
-				auto pad = Glib::RefPtr<Gst::Pad>::cast_static(selected_item);
-				RemoveCommand(pad, pad->get_parent_element()).run_command();
-			}
-			else if (Glib::RefPtr<Link>::cast_static(selected_item))
-			{
-				Glib::RefPtr<Gst::Object> model;
-				auto link = Glib::RefPtr<Link>::cast_static(selected_item);
-
-				if (!link->get_source() || !link->get_destination())
-				{
-					return;
-				}
-				if (link->get_source()->is_pad())
-					model = link->get_source();
-				else if (link->get_destination()->is_pad())
-					model = link->get_destination();
-
-				if (model)
-					UnlinkCommand(Glib::RefPtr<Gst::Pad>::cast_static(model)).run_command();
-				// else todo wtf????
-			}
-		}
 	});
 
 	ui->statusbar->addWidget(new QLabel("Current model: "));
@@ -146,88 +67,21 @@ MainWindow::MainWindow(QWidget *parent)
 		}
 	});
 
-	static std::map<Glib::RefPtr<Gst::Pad>, gulong> probe_ides;
-	connect(ui->probeBufferCheckBox, &QCheckBox::toggled, [this](bool c) {
-		Glib::RefPtr<Gst::Pad> pad = pad.cast_static(current_object);
-		if (!pad)
-			return;
-		if (c)
+	connect(workspace, &WorkspaceWidget::selected_item_changed, gst_object_manager, &GstObjectManagePanel::selected_item_changed);
+
+	connect(ui->runCommandPushButton, &QPushButton::pressed, [this](){
+		try
 		{
-			probe_ides[pad] = pad->add_probe(Gst::PAD_PROBE_TYPE_BUFFER, [](const Glib::RefPtr<Gst::Pad>& pad, const Gst::PadProbeInfo& info){
-				qDebug() << info.get_id();
-				return Gst::PAD_PROBE_OK;
-			});
+			controller->call_command(ui->commandLineEdit->text().toStdString());
 		}
-		else
+		catch (const std::runtime_error& ex)
 		{
-			pad->remove_probe(probe_ides[pad]);
+			show_error(ex.what());
 		}
 	});
 
 	reload_plugin_inspector();
 }
-
-void MainWindow::clear_layout(QLayout* layout)
-{
-	QLayoutItem* item;
-	while ((item = layout->takeAt(0)) != nullptr)
-	{
-		delete item->widget();
-		delete item;
-	}
-}
-
-void MainWindow::selected_item_changed(const Glib::RefPtr<Gst::Object>& o)
-{
-	ui->objectInfoTreeWidget->clear();
-	ui->requestPadsGroupBox->hide();
-	ui->probesGroupBox->hide();
-	if (o)
-	{
-		for (auto a : GstUtils::get_object_info(o))
-		{
-			show_object_info(a.first, a.second, nullptr);
-		}
-		selected_item = o;
-
-		if (selected_item->is_element())
-		{
-			auto se = Glib::RefPtr<Gst::Element>::cast_static(selected_item);
-
-			clear_layout(ui->tabWidget->widget(1)->layout());
-			ui->tabWidget->widget(1)->layout()->addWidget(Property::build_property_widget(se));
-			Gst::State state, pending;
-			se->get_state(state, pending, 0);
-			state_changed(se, state);
-
-			clear_layout(ui->requestPadsGroupBox->layout());
-
-			if (se->get_factory())
-			{
-				auto pad_templates = se->get_factory()->get_static_pad_templates();
-
-				for (auto tpl : pad_templates)
-					if (tpl.get_presence() == Gst::PAD_REQUEST)
-					{
-						auto btn = new QPushButton(tpl.get_name_template().c_str());
-						QObject::connect(btn, &QPushButton::clicked, [se, tpl](bool){
-							AddCommand(se->get_pad_template(tpl.get_name_template()), se).run_command();
-						});
-						ui->requestPadsGroupBox->layout()->addWidget(btn);
-					}
-			}
-
-			ui->requestPadsGroupBox->show();
-		}
-		else if (selected_item->is_pad())
-		{
-			ui->probesGroupBox->show();
-		}
-	}
-
-	current_object = o;
-}
-
 
 void MainWindow::change_current_model(const Glib::RefPtr<Gst::Bin>& bin)
 {
@@ -239,17 +93,6 @@ void MainWindow::change_current_model(const Glib::RefPtr<Gst::Bin>& bin)
 	{
 		show_error(ex.what());
 	}
-}
-
-void MainWindow::show_object_info(std::string str, const ObjectNodeInfo& inf, QTreeWidgetItem* parent)
-{
-	QTreeWidgetItem* item = (parent == nullptr) ?
-			new QTreeWidgetItem(ui->objectInfoTreeWidget) : new QTreeWidgetItem(parent);
-	item->setText(0, str.c_str());
-	item->setText(1, inf.get_value().c_str());
-
-	for (auto a : inf.get_map())
-		show_object_info(a.first, a.second, item);
 }
 
 void MainWindow::reload_plugin_inspector()
@@ -274,13 +117,6 @@ std::shared_ptr<MainController> MainWindow::get_controller() const
 	return this->controller;
 }
 
-void MainWindow::state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state)
-{
-	state_transaction = true;
-	state_buttons[static_cast<int>(state)]->setChecked(true);
-	state_transaction = false;
-}
-
 void MainWindow::element_removed(const Glib::RefPtr<Gst::Element>& element, const Glib::RefPtr<Gst::Bin>& bin)
 {
 	if (element == controller->get_current_model())
@@ -296,6 +132,8 @@ void MainWindow::set_controller(std::shared_ptr<MainController> controller)
 	{
 		safe_call<MainController, void, IModelObserver*>(controller.get(),
 				&MainController::register_model_observer, static_cast<IModelObserver*>(workspace));
+		safe_call<MainController, void, IModelObserver*>(controller.get(),
+				&MainController::register_model_observer, static_cast<IModelObserver*>(gst_object_manager));
 		safe_call<MainController, void, IModelObserver*>(controller.get(),
 				&MainController::register_model_observer, static_cast<IModelObserver*>(this));
 
