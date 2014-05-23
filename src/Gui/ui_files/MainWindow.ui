@@ -224,6 +224,25 @@
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="probesGroupBox">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="title">
+               <string>Probes</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="probeBufferCheckBox">
+                 <property name="text">
+                  <string>BUFFER</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="requestPadsGroupBox">
               <property name="title">
                <string>Request pads</string>

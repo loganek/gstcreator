@@ -16,6 +16,23 @@
 #include <QLayout>
 #include <QMessageBox>
 
+
+// todo move to another file this hack
+#include <type_traits>
+#include <sigc++/sigc++.h>
+namespace sigc
+{
+template <typename Functor>
+struct functor_trait<Functor, false>
+{
+	typedef decltype (::sigc::mem_fun (std::declval<Functor&> (),
+			&Functor::operator())) _intermediate;
+
+	typedef typename _intermediate::result_type result_type;
+	typedef Functor functor_type;
+};
+}
+
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent),
   ui(new Ui::MainWindow),
@@ -129,6 +146,24 @@ MainWindow::MainWindow(QWidget *parent)
 		}
 	});
 
+	static std::map<Glib::RefPtr<Gst::Pad>, gulong> probe_ides;
+	connect(ui->probeBufferCheckBox, &QCheckBox::toggled, [this](bool c) {
+		Glib::RefPtr<Gst::Pad> pad = pad.cast_static(current_object);
+		if (!pad)
+			return;
+		if (c)
+		{
+			probe_ides[pad] = pad->add_probe(Gst::PAD_PROBE_TYPE_BUFFER, [](const Glib::RefPtr<Gst::Pad>& pad, const Gst::PadProbeInfo& info){
+				qDebug() << info.get_id();
+				return Gst::PAD_PROBE_OK;
+			});
+		}
+		else
+		{
+			pad->remove_probe(probe_ides[pad]);
+		}
+	});
+
 	reload_plugin_inspector();
 }
 
@@ -145,6 +180,8 @@ void MainWindow::clear_layout(QLayout* layout)
 void MainWindow::selected_item_changed(const Glib::RefPtr<Gst::Object>& o)
 {
 	ui->objectInfoTreeWidget->clear();
+	ui->requestPadsGroupBox->hide();
+	ui->probesGroupBox->hide();
 	if (o)
 	{
 		for (auto a : GstUtils::get_object_info(o))
@@ -179,8 +216,16 @@ void MainWindow::selected_item_changed(const Glib::RefPtr<Gst::Object>& o)
 						ui->requestPadsGroupBox->layout()->addWidget(btn);
 					}
 			}
+
+			ui->requestPadsGroupBox->show();
+		}
+		else if (selected_item->is_pad())
+		{
+			ui->probesGroupBox->show();
 		}
 	}
+
+	current_object = o;
 }
 
 
