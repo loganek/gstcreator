@@ -9,6 +9,7 @@
 #define PROBESWATCHERDIALOG_H_
 
 #include "Logic/IProbeObserver.h"
+#include <QStandardItemModel>
 #include <QDialog>
 
 namespace Ui{class ProbesWatcherDialog;}
@@ -27,6 +28,7 @@ public:
 
 private:
 	Ui::ProbesWatcherDialog *ui;
+	QStandardItemModel* buffer_model;
 
 };
 
