@@ -30,12 +30,11 @@ private:
 	Ui::GstObjectManagePanel *ui;
 	Glib::RefPtr<Gst::Object> selected_item;
 
-	GstProbeManager probe_manager;
-
 	std::vector<QRadioButton*> state_buttons;
 	bool state_transaction;
 
 	std::map<std::string, QCheckBox*> probe_cbs;
+	GstProbeManager& probe_manager;
 
 	void state_changed(const Glib::RefPtr<Gst::Element>& element, Gst::State state) override;
 

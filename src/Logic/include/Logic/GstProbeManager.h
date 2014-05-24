@@ -37,11 +37,16 @@ private:
 
 	std::set<IProbeObserver*> observers;
 
+	GstProbeManager() = default;
+	~GstProbeManager() = default;
+
+	GstProbeManager(const GstProbeManager&) = delete;
+	GstProbeManager& operator=(const GstProbeManager&) = delete;
 
 public:
-	virtual ~GstProbeManager() {}
 
 	static std::vector<std::pair<std::string,Gst::PadProbeType>> get_available_probes ();
+	static GstProbeManager& get_instance();
 
 	void set_probe (Glib::RefPtr<Gst::Pad> pad, Gst::PadProbeType type);
 	void remove_probe (Glib::RefPtr<Gst::Pad> pad, Gst::PadProbeType type);

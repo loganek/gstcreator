@@ -11,6 +11,7 @@
 #include "Workspace/WorkspaceWidget.h"
 #include "Commands.h"
 #include "ExportToDotDialog.h"
+#include "ProbesWatcherDialog.h"
 #include "common.h"
 #include <QLayout>
 #include <QMessageBox>
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	menuBar()->setNativeMenuBar(false);
 	workspace = new WorkspaceWidget(this);
 	ui->workspaceFrame->layout()->addWidget(workspace);
 	gst_object_manager = new GstObjectManagePanel(this);
@@ -78,6 +80,15 @@ MainWindow::MainWindow(QWidget *parent)
 		{
 			show_error(ex.what());
 		}
+	});
+
+	connect(ui->actionProbes_Watcher, &QAction::triggered, [this](bool) {
+		auto watcher = new ProbesWatcherDialog(this);
+		GstProbeManager::get_instance().register_probe_observer(watcher);
+		connect(watcher, &QDialog::finished, [watcher](int) {
+			GstProbeManager::get_instance().unregister_probe_observer(watcher);
+		});
+		watcher->show();
 	});
 
 	reload_plugin_inspector();

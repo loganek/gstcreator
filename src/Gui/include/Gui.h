@@ -12,5 +12,6 @@
 #include "Gui/MainWindow.h"
 #include "Gui/ExportToDotDialog.h"
 #include "Gui/GstObjectManagePanel.h"
+#include "Gui/ProbesWatcherDialog.h"
 
 #endif /* GUI_H_ */

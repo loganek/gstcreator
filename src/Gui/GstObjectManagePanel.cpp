@@ -17,7 +17,8 @@
 GstObjectManagePanel::GstObjectManagePanel(QWidget *parent)
 : QWidget(parent),
   ui(new Ui::GstObjectManagePanel),
-  state_transaction(false)
+  state_transaction(false),
+  probe_manager(GstProbeManager::get_instance())
 {
 	ui->setupUi(this);
 

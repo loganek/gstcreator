@@ -13,6 +13,13 @@ using namespace std;
 using namespace Gst;
 using Glib::RefPtr;
 
+GstProbeManager& GstProbeManager::get_instance()
+{
+	static GstProbeManager manager;
+
+	return manager;
+}
+
 vector<pair<string,PadProbeType>> GstProbeManager::get_available_probes ()
 {
 #define Q(x) #x
