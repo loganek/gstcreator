@@ -11,6 +11,7 @@
 #include "Logic/IProbeObserver.h"
 #include <QStandardItemModel>
 #include <QDialog>
+#include <functional>
 
 namespace Ui{class ProbesWatcherDialog;}
 
@@ -30,6 +31,8 @@ private:
 	Ui::ProbesWatcherDialog *ui;
 	QStandardItemModel* buffer_model;
 
+	QStandardItem* parse_struct(const Gst::Structure& str);
+	static std::function<QString(bool)> bool_to_str;
 };
 
 #endif /* PROBESWATCHERDIALOG_H_ */
