@@ -177,3 +177,23 @@ void MainWindow::on_actionExport_Bin_To_Dot_File_triggered(bool)
 
 	controller->export_bin_to_file(dialog.get_filename(), dialog.get_graph_details(), dialog.is_master_model());
 }
+
+void MainWindow::on_actionAdd_Plugin_Path_triggered(bool checked)
+{
+	try
+	{
+		QString filename = QFileDialog::getOpenFileName(this, "Load Plugin", QDir::currentPath(),
+				"Shared Libraries (*.so);;All files (*.*)", 0, QFileDialog::DontUseNativeDialog);
+
+		if (filename.isNull())
+			return;
+
+		Gst::Registry::get()->add_plugin(Gst::Plugin::load_file(filename.toUtf8().constData()));
+
+		reload_plugin_inspector();
+	}
+	catch (const std::exception& ex)
+	{
+		show_error(std::string("Cannot load plugin: ") + ex.what());
+	}
+}

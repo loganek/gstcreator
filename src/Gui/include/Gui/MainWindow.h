@@ -49,6 +49,7 @@ private:
 
 private Q_SLOTS:
 	void on_actionExport_Bin_To_Dot_File_triggered(bool);
+	void on_actionAdd_Plugin_Path_triggered(bool);
 };
 
 #endif /* MAINWINDOW_H_ */
