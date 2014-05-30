@@ -7,6 +7,7 @@
 
 #include "ProbesWatcherDialog.h"
 #include "ui_ProbesWatcherDialog.h"
+#include "Utils/GstUtils.h"
 #include <QDebug>
 
 using namespace Gst;
@@ -88,9 +89,15 @@ QStandardItem* ProbesWatcherDialog::parse_struct(const Structure& str)
 		{
 			if (G_TYPE_DATE == type)
 			{
-				Glib::Date value; \
+				Glib::Date value;
 				out = (str.get_field(name, value)) ?
 						value.format_string("%I:%M%p").c_str() : unknown; // todo another formatting
+			}
+			else if (GST_TYPE_CAPS == type)
+			{
+				RefPtr<const Caps> caps;
+				out = (GstUtils::get_structure_field(str, name, caps)) ?
+						caps->to_string().c_str() : unknown;
 			}
 		}
 		}

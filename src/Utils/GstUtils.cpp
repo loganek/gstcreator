@@ -220,3 +220,15 @@ RefPtr<Element> GstUtils::get_top_level_parent(const RefPtr<Object>& object)
 
 	return RefPtr<Element>();
 }
+
+bool GstUtils::get_structure_field(const Structure& structure, const Glib::ustring& fieldname, RefPtr<const Caps>& value)
+{
+	Glib::ValueBase base;
+	structure.get_field(fieldname, base);
+
+	if (!GST_VALUE_HOLDS_CAPS(base.gobj()))
+		return false;
+
+	value = Glib::wrap(const_cast<GstCaps*>(gst_value_get_caps(base.gobj())), true);
+	return true;
+}
