@@ -9,5 +9,6 @@
 #define GSTREAMEREXTENSIONS_H_
 
 #include "GstreamerExtensions/Link.h"
+#include "GstreamerExtensions/SometimesPad.h"
 
 #endif /* GSTREAMEREXTENSIONS_H_ */

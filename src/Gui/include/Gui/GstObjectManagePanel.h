@@ -45,6 +45,9 @@ private:
 
 public Q_SLOTS:
 	void selected_item_changed(const Glib::RefPtr<Gst::Object>& o);
+
+Q_SIGNALS:
+	void sometimes_pad_added(const Glib::RefPtr<Gst::Pad>& pad);
 };
 
 #endif /* GSTOBJECTMANAGEPANEL_H_ */

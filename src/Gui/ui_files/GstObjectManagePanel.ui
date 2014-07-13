@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>375</width>
-    <height>418</height>
+    <height>438</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,6 +107,14 @@
           <string>Request pads</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6"/>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="sometimesPadsGroupBox">
+         <property name="title">
+          <string>Sometimes pads</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout"/>
         </widget>
        </item>
       </layout>

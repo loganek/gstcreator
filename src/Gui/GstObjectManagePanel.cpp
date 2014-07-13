@@ -11,6 +11,7 @@
 #include "Properties/Property.h"
 #include "GstreamerExtensions/Link.h"
 #include "Logic/GstProbeManager.h"
+#include "GstreamerExtensions/SometimesPad.h"
 #include <QGridLayout>
 
 
@@ -82,6 +83,7 @@ void GstObjectManagePanel::selected_item_changed(const Glib::RefPtr<Gst::Object>
 {
 	ui->objectInfoTreeWidget->clear();
 	ui->requestPadsGroupBox->hide();
+	ui->sometimesPadsGroupBox->hide();
 	ui->probesGroupBox->hide();
 	if (o)
 	{
@@ -102,12 +104,14 @@ void GstObjectManagePanel::selected_item_changed(const Glib::RefPtr<Gst::Object>
 			state_changed(se, state);
 
 			clear_layout(ui->requestPadsGroupBox->layout());
+			clear_layout(ui->sometimesPadsGroupBox->layout());
 
 			if (se->get_factory())
 			{
 				auto pad_templates = se->get_factory()->get_static_pad_templates();
 
 				for (auto tpl : pad_templates)
+				{
 					if (tpl.get_presence() == Gst::PAD_REQUEST)
 					{
 						auto btn = new QPushButton(tpl.get_name_template().c_str());
@@ -116,9 +120,19 @@ void GstObjectManagePanel::selected_item_changed(const Glib::RefPtr<Gst::Object>
 						});
 						ui->requestPadsGroupBox->layout()->addWidget(btn);
 					}
+					else if (tpl.get_presence() == Gst::PAD_SOMETIMES)
+					{
+						auto btn = new QPushButton(tpl.get_name_template().c_str());
+						QObject::connect(btn, &QPushButton::clicked, [this, se, tpl, o](bool){
+							Q_EMIT sometimes_pad_added(SometimesPad::create(se->get_pad_template(tpl.get_name_template()), o));
+						});
+						ui->sometimesPadsGroupBox->layout()->addWidget(btn);
+					}
+				}
 			}
 
 			ui->requestPadsGroupBox->show();
+			ui->sometimesPadsGroupBox->show();
 		}
 		else if (selected_item->is_pad())
 		{

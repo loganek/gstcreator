@@ -38,6 +38,8 @@ public:
 
 	void register_model_observer(IModelObserver* observer);
 	void unregister_model_observer(IModelObserver* observer);
+
+	GstController& get_gstcontroller () { return gst_controller; }
 };
 
 #endif /* MAINCONTROLLER_H_ */

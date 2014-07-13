@@ -19,6 +19,8 @@ private:
 	const Glib::RefPtr<Gst::Pipeline> master_model;
 	Glib::RefPtr<Gst::Bin> current_model;
 
+	std::vector<Glib::RefPtr<Gst::Pad>> sometimes_pads;
+
 	std::set<IModelObserver*> observers;
 
 	void set_watch_method(const Glib::RefPtr<Gst::Element>& element);
@@ -43,6 +45,8 @@ public:
 
 	void register_model_observer(IModelObserver* observer);
 	void unregister_model_observer(IModelObserver* observer);
+
+	void add_sometimes_pad(const Glib::RefPtr<Gst::Pad>& pad);
 };
 
 #endif /* GSTCONTROLLER_H_ */

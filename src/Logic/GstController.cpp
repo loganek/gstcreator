@@ -132,3 +132,10 @@ void GstController::set_watch_method(const RefPtr<Element>& element)
 		});
 	}
 }
+
+void GstController::add_sometimes_pad(const RefPtr<Pad>& pad)
+{
+	sometimes_pads.push_back(pad);
+	notify_observers<const RefPtr<Pad>&>(
+			&IModelObserver::pad_added, sometimes_pads.back());
+}

@@ -91,6 +91,10 @@ MainWindow::MainWindow(QWidget *parent)
 		watcher->show();
 	});
 
+	connect(gst_object_manager, &GstObjectManagePanel::sometimes_pad_added, [this](const Glib::RefPtr<Gst::Pad>& pad){
+		controller->get_gstcontroller().add_sometimes_pad(pad);
+	});
+
 	reload_plugin_inspector();
 }
 
