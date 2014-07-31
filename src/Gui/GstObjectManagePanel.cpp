@@ -124,7 +124,13 @@ void GstObjectManagePanel::selected_item_changed(const Glib::RefPtr<Gst::Object>
 					{
 						auto btn = new QPushButton(tpl.get_name_template().c_str());
 						QObject::connect(btn, &QPushButton::clicked, [this, se, tpl, o](bool){
-							Q_EMIT sometimes_pad_added(SometimesPad::create(se->get_pad_template(tpl.get_name_template()), o));
+								bool ok;
+								QString pad_name = QInputDialog::getText(nullptr, "Select Element's Name",
+										tr("Element name (empty for default name):"), QLineEdit::Normal, "", &ok);
+								if (ok)
+								{
+									Q_EMIT sometimes_pad_added(SometimesPad::create(se->get_pad_template(tpl.get_name_template()), o, pad_name.toStdString()));
+								}
 						});
 						ui->sometimesPadsGroupBox->layout()->addWidget(btn);
 					}

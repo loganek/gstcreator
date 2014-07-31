@@ -10,9 +10,11 @@
 using namespace Gst;
 using Glib::RefPtr;
 
-RefPtr<Pad> SometimesPad::create(const RefPtr<const PadTemplate>& pad_template, const RefPtr<Object>& parent)
+RefPtr<Pad> SometimesPad::create(const RefPtr<const PadTemplate>& pad_template, const RefPtr<Object>& parent, const std::string& name)
 {
-	auto pad = Pad::create(pad_template);
+	auto pad = (name.empty()) ?
+			Pad::create(pad_template) :
+			Pad::create(pad_template, name);
 	pad->set_parent(parent);
 
 	return pad;

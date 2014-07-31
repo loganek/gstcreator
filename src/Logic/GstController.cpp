@@ -87,6 +87,24 @@ void GstController::set_watch_method(const RefPtr<Element>& element)
 	element->signal_pad_added().connect([this](const RefPtr<Pad>& pad){
 		notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_added, pad);
 
+		if (pad->get_pad_template()->get_presence() == PAD_SOMETIMES)
+		{
+			for (auto sp : sometimes_pads)
+			{
+				if (sp->get_pad_template()->get_name() == pad->get_pad_template()->get_name())
+				{
+					auto p = sp->get_peer();
+					sp->unlink(p);
+					pad->link(p);
+					RefPtr<Element>::cast_static(pad->get_parent())->signal_pad_removed().connect([pad, sp, p](const RefPtr<Pad>& padek){
+						if (pad == padek)
+						{
+							sp->link(p);
+						}
+					});
+				}
+			}
+		}
 		pad->signal_linked().connect([this](const RefPtr<Pad>& proxy_pad){
 			notify_observers<const RefPtr<Pad>&>(&IModelObserver::pad_linked, proxy_pad);
 		});

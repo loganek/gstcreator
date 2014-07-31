@@ -13,7 +13,7 @@
 class SometimesPad : public Gst::Pad
 {
 public:
-	static Glib::RefPtr<Gst::Pad> create(const Glib::RefPtr<const Gst::PadTemplate>& pad_template, const Glib::RefPtr<Gst::Object>& parent);
+	static Glib::RefPtr<Gst::Pad> create(const Glib::RefPtr<const Gst::PadTemplate>& pad_template, const Glib::RefPtr<Gst::Object>& parent, const std::string& name);
 };
 
 #endif /* SOMETIMESPAD_H_ */
